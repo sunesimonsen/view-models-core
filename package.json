@@ -1,0 +1,19 @@
+{
+  "name": "@view-models/core",
+  "version": "0.1.0",
+  "description": "A lightweight, framework-agnostic library for building reactive view models with TypeScript",
+  "keywords": [
+    "view"
+  ],
+  "license": "MIT",
+  "author": "Sune Simonsen",
+  "type": "module",
+  "main": "dist/index.esm",
+  "scripts": {
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "prettier": "^3.7.4",
+    "vitest": "^4.0.16"
+  }
+}
