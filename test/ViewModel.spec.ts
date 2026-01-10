@@ -83,14 +83,14 @@ const expectedUpdates = [
 describe("ViewModel", () => {
   let calculator: Calculator;
   let updates: CalculatorState[];
-  const updater = (state: CalculatorState) => {
-    updates.push(state);
-  };
+  let unsubscribe: () => void;
 
   beforeEach(() => {
     updates = [];
     calculator = new Calculator();
-    calculator.subscribe(updater);
+    unsubscribe = calculator.subscribe((state: CalculatorState) => {
+      updates.push(state);
+    });
 
     calculator.add(10);
     calculator.add(5);
@@ -112,7 +112,7 @@ describe("ViewModel", () => {
 
   describe("after unsubscribing", () => {
     beforeEach(() => {
-      calculator.unsubscribe(updater);
+      unsubscribe();
     });
 
     it("emits no more updates", () => {
