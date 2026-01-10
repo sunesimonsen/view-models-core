@@ -50,5 +50,8 @@
     "prettier": "^3.7.4",
     "typescript": "^5.7.3",
     "vitest": "^4.0.16"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
