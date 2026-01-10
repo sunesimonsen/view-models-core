@@ -2,6 +2,8 @@
 
 A lightweight, framework-agnostic library for building reactive view models with TypeScript. Separate your business logic from your UI framework with a simple, testable pattern.
 
+![View models banner](./view-models.png)
+
 ## Why View Models?
 
 - **Framework Agnostic**: Write your logic once, use it with React, Preact, or any other framework
