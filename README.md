@@ -200,9 +200,10 @@ class AppViewModel {
 }
 ```
 
-### Handle Side Effects
+### Asynchronous actions
 
-Keep your update logic pure, but expose methods for side effects:
+While the update logic is pure, you can use methods to execute asynchronous
+actions:
 
 ```typescript
 class TodosViewModel extends ViewModel<TodosState> {
