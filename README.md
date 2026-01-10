@@ -76,10 +76,7 @@ describe("CounterViewModel", () => {
     counter.increment();
     counter.increment();
 
-    expect(updates).toEqual([
-      { count: 1 },
-      { count: 2 },
-    ]);
+    expect(updates).toEqual([{ count: 1 }, { count: 2 }]);
   });
 });
 ```
