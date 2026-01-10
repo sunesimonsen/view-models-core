@@ -3,17 +3,39 @@
   "version": "0.1.0",
   "description": "A lightweight, framework-agnostic library for building reactive view models with TypeScript",
   "keywords": [
-    "view"
+    "view",
+    "viewmodel",
+    "reactive",
+    "state",
+    "typescript"
   ],
   "license": "MIT",
   "author": "Sune Simonsen",
   "type": "module",
-  "main": "dist/index.esm",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
-    "test": "vitest"
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "prepublishOnly": "npm run build"
   },
   "devDependencies": {
     "prettier": "^3.7.4",
+    "typescript": "^5.7.3",
     "vitest": "^4.0.16"
   }
 }
