@@ -1,9 +1,4 @@
 /**
- * The base type of view model state.
- */
-export type State = Readonly<object>;
-
-/**
  * Function that receives the current state and returns the new state.
  * The updater function should be pure and return a new state object.
  *
@@ -11,7 +6,7 @@ export type State = Readonly<object>;
  * @param currentState - The current state
  * @returns The new state
  */
-export type Updater<T extends State> = (currentState: T) => T;
+export type Updater<T> = (currentState: T) => T;
 
 /**
  * Function that gets called when the state changes.
@@ -27,7 +22,7 @@ export type ViewModelListener<T> = (state: T) => void;
  * A ViewModel manages state and notifies subscribers when the state changes.
  * Extend this class to create your own view models with custom business logic.
  *
- * @template T - The state type (must be a readonly object)
+ * @template T - The state type
  *
  * @example
  * ```typescript
@@ -50,7 +45,7 @@ export type ViewModelListener<T> = (state: T) => void;
  * counter.increment(); // Logs: Count: 1
  * ```
  */
-export abstract class ViewModel<T extends State> {
+export abstract class ViewModel<T> {
   private _listeners: Set<ViewModelListener<T>> = new Set();
 
   /**
