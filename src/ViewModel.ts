@@ -14,7 +14,7 @@ export type Updater<T> = (currentState: T) => T;
  * @template T - The state type
  * @param state - The new state
  */
-export type ViewModelListener<T> = (state: T) => void;
+export type ViewModelListener = () => void;
 
 /**
  * Abstract base class for creating reactive view models.
@@ -22,7 +22,7 @@ export type ViewModelListener<T> = (state: T) => void;
  * A ViewModel manages state and notifies subscribers when the state changes.
  * Extend this class to create your own view models with custom business logic.
  *
- * @template T - The state type
+ * @template S - The state type
  *
  * @example
  * ```typescript
@@ -45,8 +45,8 @@ export type ViewModelListener<T> = (state: T) => void;
  * counter.increment(); // Logs: Count: 1
  * ```
  */
-export abstract class ViewModel<T> {
-  private _listeners: Set<ViewModelListener<T>> = new Set();
+export abstract class ViewModel<S> {
+  private _listeners: Set<ViewModelListener> = new Set();
 
   /**
    * Subscribe to state changes.
@@ -66,21 +66,21 @@ export abstract class ViewModel<T> {
    * unsubscribe();
    * ```
    */
-  subscribe(listener: ViewModelListener<T>): () => void {
+  subscribe(listener: ViewModelListener): () => void {
     this._listeners.add(listener);
     return () => {
       this._listeners.delete(listener);
     };
   }
 
-  private _state: T;
+  private _state: S;
 
   /**
    * Create a new ViewModel with the given initial state.
    *
    * @param initialState - The initial state of the view model
    */
-  constructor(initialState: T) {
+  constructor(initialState: S) {
     this._state = initialState;
   }
 
@@ -101,11 +101,11 @@ export abstract class ViewModel<T> {
    * }));
    * ```
    */
-  protected update(updater: Updater<T>) {
+  protected update(updater: Updater<S>) {
     this._state = updater(this._state);
 
     for (const listener of this._listeners) {
-      listener(this._state);
+      listener();
     }
   }
 
@@ -114,7 +114,7 @@ export abstract class ViewModel<T> {
    *
    * @returns The current state
    */
-  get state(): T {
+  get state(): S {
     return this._state;
   }
 }

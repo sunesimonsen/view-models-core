@@ -88,8 +88,8 @@ describe("ViewModel", () => {
   beforeEach(() => {
     updates = [];
     calculator = new Calculator();
-    unsubscribe = calculator.subscribe((state: CalculatorState) => {
-      updates.push(state);
+    unsubscribe = calculator.subscribe(() => {
+      updates.push(calculator.state);
     });
 
     calculator.add(10);
