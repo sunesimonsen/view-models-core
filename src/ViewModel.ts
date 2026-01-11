@@ -1,4 +1,7 @@
-type State = Readonly<object>;
+/**
+ * The base type of view model state.
+ */
+export type State = Readonly<object>;
 
 /**
  * Function that receives the current state and returns the new state.
