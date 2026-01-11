@@ -87,8 +87,8 @@ describe("CounterViewModel", () => {
 
 The view models are designed to work with framework-specific adapters. Upcoming adapters include:
 
-- **@view-models/react** - React hooks integration
-- **@view-models/preact** - Preact hooks integration
+- [@view-models/react](https://github.com/sunesimonsen/view-models-react) - React hooks integration
+- [@view-models/preact](https://github.com/sunesimonsen/view-models-preact) - Preact hooks integration
 
 These adapters will allow you to use the same view model with different frameworks:
 
