@@ -65,7 +65,7 @@ describe("CounterViewModel", () => {
     const counter = new CounterViewModel();
     const updates = [];
 
-    counter.subscribe((state) => updates.push(state));
+    counter.subscribe(() => updates.push(counter.state));
 
     counter.increment();
     counter.increment();
@@ -120,8 +120,8 @@ Initialize the view model with an initial state.
 Subscribe to state changes. The listener will be called with the new state whenever `update()` is called.
 
 ```typescript
-const unsubscribe = viewModel.subscribe((state) => {
-  console.log("State changed:", state);
+const unsubscribe = viewModel.subscribe(() => {
+  console.log("State changed:", viewModel.state);
 });
 ```
 
