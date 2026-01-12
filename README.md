@@ -31,10 +31,6 @@ type CounterState = {
 };
 
 class CounterViewModel extends ViewModel<CounterState> {
-  constructor() {
-    super({ count: 0 });
-  }
-
   increment() {
     this.update(({ count }) => ({
       count: count + 1,
@@ -45,10 +41,6 @@ class CounterViewModel extends ViewModel<CounterState> {
     this.update(({ count }) => ({
       count: count - 1,
     }));
-  }
-
-  reset() {
-    this.update(() => ({ count: 0 }));
   }
 }
 ```
