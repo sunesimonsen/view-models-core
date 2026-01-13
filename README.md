@@ -75,6 +75,65 @@ describe("CounterViewModel", () => {
 });
 ```
 
+## View Models with Derived State
+
+When you need to compute derived values from your state (like counts, filtered lists, or formatted data), use `ViewModelWithDerivedState`:
+
+```typescript
+import { ViewModelWithDerivedState } from "@view-models/core";
+
+type TodoState = {
+  items: Array<{ id: string; text: string; done: boolean }>;
+};
+
+type TodoDerivedState = TodoState & {
+  totalCount: number;
+  completedCount: number;
+  remainingCount: number;
+};
+
+class TodoViewModel extends ViewModelWithDerivedState<
+  TodoState,
+  TodoDerivedState
+> {
+  constructor() {
+    super({ items: [] });
+  }
+
+  computeDerivedState({ items }: TodoState): TodoDerivedState {
+    return {
+      items,
+      totalCount: items.length,
+      completedCount: items.filter((item) => item.done).length,
+      remainingCount: items.filter((item) => !item.done).length,
+    };
+  }
+
+  addTodo(text: string) {
+    this.update(({ items }) => ({
+      items: [...items, { id: crypto.randomUUID(), text, done: false }],
+    }));
+  }
+
+  toggleTodo(id: string) {
+    this.update(({ items }) => ({
+      items: items.map((item) =>
+        item.id === id ? { ...item, done: !item.done } : item
+      ),
+    }));
+  }
+}
+
+const todos = new TodoViewModel();
+console.log(todos.state.totalCount); // 0
+
+todos.addTodo("Learn ViewModels");
+console.log(todos.state.totalCount); // 1
+console.log(todos.state.remainingCount); // 1
+```
+
+The derived state is automatically recomputed whenever the internal state changes, ensuring your computed properties are always up-to-date.
+
 ## Framework Integration
 
 The view models are designed to work with framework-specific adapters. Upcoming adapters include:
@@ -115,22 +174,17 @@ Initialize the view model with an initial state.
 
 #### Methods
 
-##### `subscribe(listener: ViewModelListener<T>): void`
+##### `subscribe(listener: ViewModelListener): () => void`
 
-Subscribe to state changes. The listener will be called with the new state whenever `update()` is called.
+Subscribe to state changes. The listener will be called whenever `update()` is called. Returns a function to unsubscribe.
 
 ```typescript
 const unsubscribe = viewModel.subscribe(() => {
   console.log("State changed:", viewModel.state);
 });
-```
 
-##### `unsubscribe(listener: ViewModelListener<T>): void`
-
-Unsubscribe a previously subscribed listener.
-
-```typescript
-viewModel.unsubscribe(listener);
+// Later, to unsubscribe:
+unsubscribe();
 ```
 
 ##### `update(updater: Updater<T>): void` (protected)
@@ -146,6 +200,63 @@ The updater function receives the current state and should return the new state.
 ##### `state: T` (getter)
 
 Access the current state.
+
+```typescript
+const currentState = viewModel.state;
+```
+
+### `ViewModelWithDerivedState<S, D>`
+
+Abstract base class for creating view models with derived state. Use this when you need computed properties that are automatically recalculated when the internal state changes.
+
+#### Constructor
+
+```typescript
+constructor(initialState: S)
+```
+
+Initialize the view model with an initial internal state. The derived state is automatically computed during construction.
+
+#### Methods
+
+##### `subscribe(listener: ViewModelListener): () => void`
+
+Subscribe to state changes. The listener will be called whenever the derived state changes. Returns a function to unsubscribe.
+
+```typescript
+const unsubscribe = viewModel.subscribe(() => {
+  console.log("State changed:", viewModel.state);
+});
+
+// Later, to unsubscribe:
+unsubscribe();
+```
+
+##### `update(updater: Updater<S>): void` (protected)
+
+Update the internal state, automatically recompute derived state, and notify all subscribers. This method is protected and should only be called from within your view model subclass.
+
+```typescript
+protected update(updater: (currentState: S) => S): void
+```
+
+##### `computeDerivedState(state: S): D` (abstract)
+
+Abstract method that must be implemented to compute the derived state from the internal state. This is called automatically after each update and during initialization.
+
+```typescript
+computeDerivedState({ items }: InternalState): DerivedState {
+  return {
+    items,
+    count: items.length,
+    hasItems: items.length > 0,
+  };
+}
+```
+
+##### `state: D` (getter)
+
+Access the current derived state.
 
 ```typescript
 const currentState = viewModel.state;

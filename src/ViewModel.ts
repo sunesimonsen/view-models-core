@@ -1,20 +1,4 @@
-/**
- * Function that receives the current state and returns the new state.
- * The updater function should be pure and return a new state object.
- *
- * @template T - The state type
- * @param currentState - The current state
- * @returns The new state
- */
-export type Updater<T> = (currentState: T) => T;
-
-/**
- * Function that gets called when the state changes.
- *
- * @template T - The state type
- * @param state - The new state
- */
-export type ViewModelListener = () => void;
+import { ViewModelWithDerivedState } from "./ViewModelWithDerivedState";
 
 /**
  * Abstract base class for creating reactive view models.
@@ -45,76 +29,17 @@ export type ViewModelListener = () => void;
  * counter.increment(); // Logs: Count: 1
  * ```
  */
-export abstract class ViewModel<S> {
-  private _listeners: Set<ViewModelListener> = new Set();
-
-  /**
-   * Subscribe to state changes.
-   *
-   * The listener will be called immediately after any state update.
-   *
-   * @param listener - Function to call when state changes
-   * @returns Function to unsubscribe the listener
-   *
-   * @example
-   * ```typescript
-   * const unsubscribe = viewModel.subscribe((state) => {
-   *   console.log('State changed:', state);
-   * });
-   *
-   * // Later, when you want to stop listening:
-   * unsubscribe();
-   * ```
-   */
-  subscribe(listener: ViewModelListener): () => void {
-    this._listeners.add(listener);
-    return () => {
-      this._listeners.delete(listener);
-    };
-  }
-
-  private _state: S;
-
+export abstract class ViewModel<S> extends ViewModelWithDerivedState<S, S> {
   /**
    * Create a new ViewModel with the given initial state.
    *
    * @param initialState - The initial state of the view model
    */
   constructor(initialState: S) {
-    this._state = initialState;
+    super(initialState);
   }
 
-  /**
-   * Update the state and notify all subscribers.
-   *
-   * This method is protected and should only be called from within your view model subclass.
-   * The updater function receives the current state and should return the new state.
-   * Always return a new state object to ensure immutability.
-   *
-   * @param updater - Function that receives current state and returns new state
-   *
-   * @example
-   * ```typescript
-   * this.update((currentState) => ({
-   *   ...currentState,
-   *   count: currentState.count + 1
-   * }));
-   * ```
-   */
-  protected update(updater: Updater<S>) {
-    this._state = updater(this._state);
-
-    for (const listener of this._listeners) {
-      listener();
-    }
-  }
-
-  /**
-   * Get the current state.
-   *
-   * @returns The current state
-   */
-  get state(): S {
-    return this._state;
+  computeDerivedState(state: S): S {
+    return state;
   }
 }
