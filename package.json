@@ -43,11 +43,14 @@
     "test:coverage": "vitest run --coverage",
     "format": "prettier --write \"**/*.{ts,js,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,js,json,md}\"",
+    "docs": "typedoc && npm run format",
     "prepublishOnly": "npm run build"
   },
   "devDependencies": {
     "@vitest/coverage-v8": "^4.0.16",
     "prettier": "^3.7.4",
+    "typedoc": "^0.28.16",
+    "typedoc-plugin-markdown": "^4.9.0",
     "typescript": "^5.7.3",
     "vitest": "^4.0.16"
   },

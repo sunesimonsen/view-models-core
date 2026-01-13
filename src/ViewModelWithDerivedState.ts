@@ -12,7 +12,6 @@ export type Updater<T> = (currentState: T) => T;
  * Function that gets called when the state changes.
  *
  * @template T - The state type
- * @param state - The new state
  */
 export type ViewModelListener = () => void;
 
@@ -29,22 +28,22 @@ export type ViewModelListener = () => void;
  *
  * @example
  * ```typescript
- * type TodoInternalState = {
+ * type TodoState = {
  *   items: Array<{ id: string; text: string; done: boolean }>;
  * };
  *
- * type TodoDerivedState = TodoInternalState & {
+ * type TodoDerivedState = TodoState & {
  *   totalCount: number;
  *   completedCount: number;
  *   remainingCount: number;
  * };
  *
- * class TodoViewModel extends ViewModelWithDerivedState<TodoInternalState, TodoDerivedState> {
+ * class TodoViewModel extends ViewModelWithDerivedState<TodoState, TodoDerivedState> {
  *   constructor() {
  *     super({ items: [] });
  *   }
  *
- *   computeDerivedState({ items }: TodoInternalState): TodoDerivedState {
+ *   computeDerivedState({ items }: TodoState): TodoDerivedState {
  *     return {
  *       items,
  *       totalCount: items.length,

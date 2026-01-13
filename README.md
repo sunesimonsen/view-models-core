@@ -118,7 +118,7 @@ class TodoViewModel extends ViewModelWithDerivedState<
   toggleTodo(id: string) {
     this.update(({ items }) => ({
       items: items.map((item) =>
-        item.id === id ? { ...item, done: !item.done } : item
+        item.id === id ? { ...item, done: !item.done } : item,
       ),
     }));
   }
@@ -160,107 +160,7 @@ function Counter({ model }) {
 
 ## API Reference
 
-### `ViewModel<T>`
-
-Abstract base class for creating view models.
-
-#### Constructor
-
-```typescript
-constructor(initialState: T)
-```
-
-Initialize the view model with an initial state.
-
-#### Methods
-
-##### `subscribe(listener: ViewModelListener): () => void`
-
-Subscribe to state changes. The listener will be called whenever `update()` is called. Returns a function to unsubscribe.
-
-```typescript
-const unsubscribe = viewModel.subscribe(() => {
-  console.log("State changed:", viewModel.state);
-});
-
-// Later, to unsubscribe:
-unsubscribe();
-```
-
-##### `update(updater: Updater<T>): void` (protected)
-
-Update the state and notify all subscribers. This method is protected and should only be called from within your view model subclass.
-
-```typescript
-protected update(updater: (currentState: T) => T): void
-```
-
-The updater function receives the current state and should return the new state.
-
-##### `state: T` (getter)
-
-Access the current state.
-
-```typescript
-const currentState = viewModel.state;
-```
-
-### `ViewModelWithDerivedState<S, D>`
-
-Abstract base class for creating view models with derived state. Use this when you need computed properties that are automatically recalculated when the internal state changes.
-
-#### Constructor
-
-```typescript
-constructor(initialState: S)
-```
-
-Initialize the view model with an initial internal state. The derived state is automatically computed during construction.
-
-#### Methods
-
-##### `subscribe(listener: ViewModelListener): () => void`
-
-Subscribe to state changes. The listener will be called whenever the derived state changes. Returns a function to unsubscribe.
-
-```typescript
-const unsubscribe = viewModel.subscribe(() => {
-  console.log("State changed:", viewModel.state);
-});
-
-// Later, to unsubscribe:
-unsubscribe();
-```
-
-##### `update(updater: Updater<S>): void` (protected)
-
-Update the internal state, automatically recompute derived state, and notify all subscribers. This method is protected and should only be called from within your view model subclass.
-
-```typescript
-protected update(updater: (currentState: S) => S): void
-```
-
-##### `computeDerivedState(state: S): D` (abstract)
-
-Abstract method that must be implemented to compute the derived state from the internal state. This is called automatically after each update and during initialization.
-
-```typescript
-computeDerivedState({ items }: InternalState): DerivedState {
-  return {
-    items,
-    count: items.length,
-    hasItems: items.length > 0,
-  };
-}
-```
-
-##### `state: D` (getter)
-
-Access the current derived state.
-
-```typescript
-const currentState = viewModel.state;
-```
+For detailed API documentation, see [docs](./docs).
 
 ## Patterns and Best Practices
 
