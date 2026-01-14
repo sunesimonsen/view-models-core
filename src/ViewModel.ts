@@ -1,4 +1,4 @@
-import { ViewModelWithDerivedState } from "./ViewModelWithDerivedState";
+import { ViewModelWithDerivedState } from "./ViewModelWithDerivedState.js";
 
 /**
  * Abstract base class for creating reactive view models.
