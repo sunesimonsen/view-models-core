@@ -1,5 +1,8 @@
 # @view-models/core
 
+[![CI](https://github.com/sunesimonsen/view-models-core/actions/workflows/ci.yml/badge.svg)](https://github.com/sunesimonsen/view-models-core/actions/workflows/ci.yml)
+[![Bundle Size](https://img.badgesize.io/https://unpkg.com/@view-models/core@2.2.0/dist/index.js?label=gzip&compression=gzip)](https://unpkg.com/@view-models/core@2.2.0/dist/index.js)
+
 A lightweight, framework-agnostic library for building reactive view models with TypeScript. Separate your business logic from your UI framework with a simple, testable pattern.
 
 ![View models banner](./view-models.png)
