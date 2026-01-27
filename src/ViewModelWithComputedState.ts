@@ -44,7 +44,7 @@ export type ViewModelListener = () => void;
  *
  *   addTodo(text: string) {
  *     super.update({
- *       items: [...this.state.items, { id: crypto.randomUUID(), text, done: false }],
+ *       items: [...super.state.items, { id: crypto.randomUUID(), text, done: false }],
  *     });
  *   }
  * }
@@ -111,7 +111,7 @@ export abstract class ViewModelWithComputedState<S extends object, D> {
    * @example
    * ```typescript
    * super.update({
-   *   count: this.state.count + 1
+   *   count: super.state.count + 1
    * });
    * ```
    */

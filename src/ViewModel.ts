@@ -18,7 +18,7 @@ import { ViewModelWithComputedState } from "./ViewModelWithComputedState.js";
  *   }
  *
  *   increment() {
- *     super.update({ count: this.state.count + 1 });
+ *     super.update({ count: super.state.count + 1 });
  *   }
  * }
  *

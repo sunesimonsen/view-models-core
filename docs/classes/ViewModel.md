@@ -24,7 +24,7 @@ class CounterViewModel extends ViewModel<CounterState> {
   }
 
   increment() {
-    super.update({ count: this.state.count + 1 });
+    super.update({ count: super.state.count + 1 });
   }
 }
 
@@ -218,7 +218,7 @@ Partial state to merge with the current internal state
 
 ```typescript
 super.update({
-  count: this.state.count + 1,
+  count: super.state.count + 1,
 });
 ```
 

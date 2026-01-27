@@ -37,13 +37,13 @@ class CounterViewModel extends ViewModel<CounterState> {
 
   increment() {
     super.update({
-      count: this.state.count + 1,
+      count: super.state.count + 1,
     });
   }
 
   decrement() {
     super.update({
-      count: this.state.count - 1,
+      count: super.state.count - 1,
     });
   }
 }
@@ -116,7 +116,7 @@ class TodoViewModel extends ViewModelWithComputedState<
   addTodo(text: string) {
     super.update({
       items: [
-        ...this.state.items,
+        ...super.state.items,
         { id: crypto.randomUUID(), text, done: false },
       ],
     });
@@ -124,7 +124,7 @@ class TodoViewModel extends ViewModelWithComputedState<
 
   toggleTodo(id: string) {
     super.update({
-      items: this.state.items.map((item) =>
+      items: super.state.items.map((item) =>
         item.id === id ? { ...item, done: !item.done } : item,
       ),
     });
@@ -178,11 +178,11 @@ Always return new state objects from your updater functions:
 ```typescript
 // Good
 super.update({
-  count: this.state.count + 1,
+  count: super.state.count + 1,
 });
 
 // Bad - mutates existing state
-const state = this.state;
+const state = super.state;
 state.count++;
 super.update(state);
 ```
@@ -238,7 +238,7 @@ class TodosViewModel extends ViewModel<TodosState> {
     try {
       const todo = await this.api.createTodo(text);
       super.update({
-        todos: [...this.state.todos, todo],
+        todos: [...super.state.todos, todo],
       });
     } catch {
       // TODO show error

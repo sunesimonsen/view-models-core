@@ -44,29 +44,29 @@ class CalculatorWithDerivedState extends ViewModelWithComputedState<
 
   add(n: number) {
     super.update({
-      history: [...this.state.history, { number: n, operator: "+" }],
-      result: this.state.result + n,
+      history: [...super.state.history, { number: n, operator: "+" }],
+      result: super.state.result + n,
     });
   }
 
   subtract(n: number) {
     super.update({
-      history: [...this.state.history, { number: n, operator: "-" }],
-      result: this.state.result - n,
+      history: [...super.state.history, { number: n, operator: "-" }],
+      result: super.state.result - n,
     });
   }
 
   divide(n: number) {
     super.update({
-      history: [...this.state.history, { number: n, operator: "/" }],
-      result: this.state.result / n,
+      history: [...super.state.history, { number: n, operator: "/" }],
+      result: super.state.result / n,
     });
   }
 
   multiply(n: number) {
     super.update({
-      history: [...this.state.history, { number: n, operator: "*" }],
-      result: this.state.result * n,
+      history: [...super.state.history, { number: n, operator: "*" }],
+      result: super.state.result * n,
     });
   }
 }

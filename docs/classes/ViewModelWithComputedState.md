@@ -48,7 +48,7 @@ class TodoViewModel extends ViewModelWithComputedState<
   addTodo(text: string) {
     super.update({
       items: [
-        ...this.state.items,
+        ...super.state.items,
         { id: crypto.randomUUID(), text, done: false },
       ],
     });
@@ -238,6 +238,6 @@ Partial state to merge with the current internal state
 
 ```typescript
 super.update({
-  count: this.state.count + 1,
+  count: super.state.count + 1,
 });
 ```
