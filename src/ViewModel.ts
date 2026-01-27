@@ -18,7 +18,7 @@ import { ViewModelWithDerivedState } from "./ViewModelWithDerivedState.js";
  *   }
  *
  *   increment() {
- *     this.update(({ count }) => ({ count: count + 1 }));
+ *     super.update({ count: this.state.count + 1 });
  *   }
  * }
  *
@@ -29,7 +29,9 @@ import { ViewModelWithDerivedState } from "./ViewModelWithDerivedState.js";
  * counter.increment(); // Logs: Count: 1
  * ```
  */
-export abstract class ViewModel<S> extends ViewModelWithDerivedState<S, S> {
+export abstract class ViewModel<
+  S extends object,
+> extends ViewModelWithDerivedState<S, S> {
   /**
    * Create a new ViewModel with the given initial state.
    *

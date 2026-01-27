@@ -31,16 +31,20 @@ type CounterState = {
 };
 
 class CounterViewModel extends ViewModel<CounterState> {
+  constructor() {
+    super({ count: 0 });
+  }
+
   increment() {
-    this.update(({ count }) => ({
-      count: count + 1,
-    }));
+    super.update({
+      count: this.state.count + 1,
+    });
   }
 
   decrement() {
-    this.update(({ count }) => ({
-      count: count - 1,
-    }));
+    super.update({
+      count: this.state.count - 1,
+    });
   }
 }
 ```
@@ -110,17 +114,20 @@ class TodoViewModel extends ViewModelWithDerivedState<
   }
 
   addTodo(text: string) {
-    this.update(({ items }) => ({
-      items: [...items, { id: crypto.randomUUID(), text, done: false }],
-    }));
+    super.update({
+      items: [
+        ...this.state.items,
+        { id: crypto.randomUUID(), text, done: false },
+      ],
+    });
   }
 
   toggleTodo(id: string) {
-    this.update(({ items }) => ({
-      items: items.map((item) =>
+    super.update({
+      items: this.state.items.map((item) =>
         item.id === id ? { ...item, done: !item.done } : item,
       ),
-    }));
+    });
   }
 }
 
@@ -170,16 +177,14 @@ Always return new state objects from your updater functions:
 
 ```typescript
 // Good
-this.update(({ count }) => ({
-  ...state,
-  count: count + 1,
-}));
+super.update({
+  count: this.state.count + 1,
+});
 
 // Bad - mutates existing state
-this.update((state) => {
-  state.count++;
-  return state;
-});
+const state = this.state;
+state.count++;
+super.update(state);
 ```
 
 ### Use Readonly Types
@@ -212,29 +217,29 @@ actions:
 
 ```typescript
 class TodosViewModel extends ViewModel<TodosState> {
-  private api: API
+  private api: API;
 
   constructor(state: TodosState, api: API) {
-    super(state)
-    this.api = api
+    super(state);
+    this.api = api;
   }
 
   async loadTodos() {
-    this.update((state) => ({ ...state, loading: true, failed: false }));
+    super.update({ loading: true, failed: false });
     try {
       const todos = await this.api.fetchTodos();
-      this.update(() => ({ todos, loading: false }));
+      super.update({ todos, loading: false });
     } catch {
-      this.update((state) => ({ ...state, loading: false: failed: true }));
+      super.update({ loading: false, failed: true });
     }
   }
 
   async addTodo(text: string) {
     try {
       const todo = await this.api.createTodo(text);
-      this.update(({ todos }) => ({
-        todos: [...todos, todo],
-      }));
+      super.update({
+        todos: [...this.state.todos, todo],
+      });
     } catch {
       // TODO show error
     }

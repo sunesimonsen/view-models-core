@@ -1,14 +1,4 @@
 /**
- * Function that receives the current state and returns the new state.
- * The updater function should be pure and return a new state object.
- *
- * @template T - The state type
- * @param currentState - The current state
- * @returns The new state
- */
-export type Updater<T> = (currentState: T) => T;
-
-/**
  * Function that gets called when the state changes.
  *
  * @template T - The state type
@@ -53,9 +43,9 @@ export type ViewModelListener = () => void;
  *   }
  *
  *   addTodo(text: string) {
- *     this.update(({ items }) => ({
- *       items: [...items, { id: crypto.randomUUID(), text, done: false }],
- *     }));
+ *     super.update({
+ *       items: [...this.state.items, { id: crypto.randomUUID(), text, done: false }],
+ *     });
  *   }
  * }
  *
@@ -66,7 +56,7 @@ export type ViewModelListener = () => void;
  * todos.addTodo('Learn ViewModels'); // Logs: Completed: 0
  * ```
  */
-export abstract class ViewModelWithDerivedState<S, D> {
+export abstract class ViewModelWithDerivedState<S extends object, D> {
   private _listeners: Set<ViewModelListener> = new Set();
   private _internalState: S;
   private _state: D;
@@ -113,22 +103,20 @@ export abstract class ViewModelWithDerivedState<S, D> {
    * Update the internal state, recompute derived state, and notify all subscribers.
    *
    * This method is protected and should only be called from within your view model subclass.
-   * The updater function receives the current internal state and should return the new internal state.
+   * The partial state is merged with the current internal state to create the new internal state.
    * After updating, the derived state is automatically recomputed via `computeDerivedState`.
-   * Always return a new state object to ensure immutability.
    *
-   * @param updater - Function that receives current internal state and returns new internal state
+   * @param partial - Partial state to merge with the current internal state
    *
    * @example
    * ```typescript
-   * this.update((currentState) => ({
-   *   ...currentState,
-   *   count: currentState.count + 1
-   * }));
+   * super.update({
+   *   count: this.state.count + 1
+   * });
    * ```
    */
-  protected update(updater: Updater<S>) {
-    this._internalState = updater(this._internalState);
+  protected update(partial: Partial<S>) {
+    this._internalState = { ...this._internalState, ...partial };
     this._state = this.computeDerivedState(this._internalState);
 
     for (const listener of this._listeners) {

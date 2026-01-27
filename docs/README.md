@@ -11,5 +11,4 @@
 
 ## Type Aliases
 
-- [Updater](type-aliases/Updater.md)
 - [ViewModelListener](type-aliases/ViewModelListener.md)

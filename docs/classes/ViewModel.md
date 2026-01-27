@@ -24,7 +24,7 @@ class CounterViewModel extends ViewModel<CounterState> {
   }
 
   increment() {
-    this.update(({ count }) => ({ count: count + 1 }));
+    super.update({ count: this.state.count + 1 });
   }
 }
 
@@ -43,7 +43,7 @@ counter.increment(); // Logs: Count: 1
 
 ### S
 
-`S`
+`S` _extends_ `object`
 
 The state type
 
@@ -81,7 +81,7 @@ The initial state of the view model
 
 > **get** **state**(): `D`
 
-Defined in: [ViewModelWithDerivedState.ts:171](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModelWithDerivedState.ts#L171)
+Defined in: [ViewModelWithDerivedState.ts:159](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModelWithDerivedState.ts#L159)
 
 Get the current derived state.
 
@@ -149,7 +149,7 @@ computeDerivedState({ count }: CounterState): CounterDerivedState {
 
 > **subscribe**(`listener`): () => `void`
 
-Defined in: [ViewModelWithDerivedState.ts:92](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModelWithDerivedState.ts#L92)
+Defined in: [ViewModelWithDerivedState.ts:82](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModelWithDerivedState.ts#L82)
 
 Subscribe to state changes.
 
@@ -192,24 +192,23 @@ unsubscribe();
 
 ### update()
 
-> `protected` **update**(`updater`): `void`
+> `protected` **update**(`partial`): `void`
 
-Defined in: [ViewModelWithDerivedState.ts:130](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModelWithDerivedState.ts#L130)
+Defined in: [ViewModelWithDerivedState.ts:118](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModelWithDerivedState.ts#L118)
 
 Update the internal state, recompute derived state, and notify all subscribers.
 
 This method is protected and should only be called from within your view model subclass.
-The updater function receives the current internal state and should return the new internal state.
+The partial state is merged with the current internal state to create the new internal state.
 After updating, the derived state is automatically recomputed via `computeDerivedState`.
-Always return a new state object to ensure immutability.
 
 #### Parameters
 
-##### updater
+##### partial
 
-[`Updater`](../type-aliases/Updater.md)\<`S`\>
+`Partial`\<`S`\>
 
-Function that receives current internal state and returns new internal state
+Partial state to merge with the current internal state
 
 #### Returns
 
@@ -218,10 +217,9 @@ Function that receives current internal state and returns new internal state
 #### Example
 
 ```typescript
-this.update((currentState) => ({
-  ...currentState,
-  count: currentState.count + 1,
-}));
+super.update({
+  count: this.state.count + 1,
+});
 ```
 
 #### Inherited from

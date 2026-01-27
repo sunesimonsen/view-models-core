@@ -6,7 +6,7 @@
 
 # Abstract Class: ViewModelWithDerivedState\<S, D\>
 
-Defined in: [ViewModelWithDerivedState.ts:69](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModelWithDerivedState.ts#L69)
+Defined in: [ViewModelWithDerivedState.ts:59](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModelWithDerivedState.ts#L59)
 
 Abstract base class for creating reactive view models with derived state.
 
@@ -46,9 +46,12 @@ class TodoViewModel extends ViewModelWithDerivedState<
   }
 
   addTodo(text: string) {
-    this.update(({ items }) => ({
-      items: [...items, { id: crypto.randomUUID(), text, done: false }],
-    }));
+    super.update({
+      items: [
+        ...this.state.items,
+        { id: crypto.randomUUID(), text, done: false },
+      ],
+    });
   }
 }
 
@@ -67,7 +70,7 @@ todos.addTodo("Learn ViewModels"); // Logs: Completed: 0
 
 ### S
 
-`S`
+`S` _extends_ `object`
 
 The internal state type (managed internally)
 
@@ -83,7 +86,7 @@ The derived state type (exposed to subscribers)
 
 > **new ViewModelWithDerivedState**\<`S`, `D`\>(`initialState`): `ViewModelWithDerivedState`\<`S`, `D`\>
 
-Defined in: [ViewModelWithDerivedState.ts:107](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModelWithDerivedState.ts#L107)
+Defined in: [ViewModelWithDerivedState.ts:97](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModelWithDerivedState.ts#L97)
 
 Create a new ViewModel with the given initial internal state.
 
@@ -110,7 +113,7 @@ The initial internal state of the view model
 
 > **get** **state**(): `D`
 
-Defined in: [ViewModelWithDerivedState.ts:171](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModelWithDerivedState.ts#L171)
+Defined in: [ViewModelWithDerivedState.ts:159](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModelWithDerivedState.ts#L159)
 
 Get the current derived state.
 
@@ -129,7 +132,7 @@ The current derived state
 
 > `abstract` **computeDerivedState**(`state`): `D`
 
-Defined in: [ViewModelWithDerivedState.ts:161](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModelWithDerivedState.ts#L161)
+Defined in: [ViewModelWithDerivedState.ts:149](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModelWithDerivedState.ts#L149)
 
 Compute the derived state from the internal state.
 
@@ -170,7 +173,7 @@ computeDerivedState({ count }: CounterState): CounterDerivedState {
 
 > **subscribe**(`listener`): () => `void`
 
-Defined in: [ViewModelWithDerivedState.ts:92](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModelWithDerivedState.ts#L92)
+Defined in: [ViewModelWithDerivedState.ts:82](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModelWithDerivedState.ts#L82)
 
 Subscribe to state changes.
 
@@ -209,24 +212,23 @@ unsubscribe();
 
 ### update()
 
-> `protected` **update**(`updater`): `void`
+> `protected` **update**(`partial`): `void`
 
-Defined in: [ViewModelWithDerivedState.ts:130](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModelWithDerivedState.ts#L130)
+Defined in: [ViewModelWithDerivedState.ts:118](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModelWithDerivedState.ts#L118)
 
 Update the internal state, recompute derived state, and notify all subscribers.
 
 This method is protected and should only be called from within your view model subclass.
-The updater function receives the current internal state and should return the new internal state.
+The partial state is merged with the current internal state to create the new internal state.
 After updating, the derived state is automatically recomputed via `computeDerivedState`.
-Always return a new state object to ensure immutability.
 
 #### Parameters
 
-##### updater
+##### partial
 
-[`Updater`](../type-aliases/Updater.md)\<`S`\>
+`Partial`\<`S`\>
 
-Function that receives current internal state and returns new internal state
+Partial state to merge with the current internal state
 
 #### Returns
 
@@ -235,8 +237,7 @@ Function that receives current internal state and returns new internal state
 #### Example
 
 ```typescript
-this.update((currentState) => ({
-  ...currentState,
-  count: currentState.count + 1,
-}));
+super.update({
+  count: this.state.count + 1,
+});
 ```
