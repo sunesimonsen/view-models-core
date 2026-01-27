@@ -21,31 +21,31 @@ class Calculator extends ViewModel<CalculatorState> {
   }
 
   add(n: number) {
-    super.update(({ history, result }) => ({
-      history: [...history, { number: n, operator: "+" }],
-      result: result + n,
-    }));
+    super.update({
+      history: [...super.state.history, { number: n, operator: "+" }],
+      result: super.state.result + n,
+    });
   }
 
   subtract(n: number) {
-    super.update(({ history, result }) => ({
-      history: [...history, { number: n, operator: "-" }],
-      result: result - n,
-    }));
+    super.update({
+      history: [...super.state.history, { number: n, operator: "-" }],
+      result: super.state.result - n,
+    });
   }
 
   divide(n: number) {
-    super.update(({ history, result }) => ({
-      history: [...history, { number: n, operator: "/" }],
-      result: result / n,
-    }));
+    super.update({
+      history: [...super.state.history, { number: n, operator: "/" }],
+      result: super.state.result / n,
+    });
   }
 
   multiply(n: number) {
-    super.update(({ history, result }) => ({
-      history: [...history, { number: n, operator: "*" }],
-      result: result * n,
-    }));
+    super.update({
+      history: [...super.state.history, { number: n, operator: "*" }],
+      result: super.state.result * n,
+    });
   }
 }
 

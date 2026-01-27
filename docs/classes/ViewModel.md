@@ -24,7 +24,7 @@ class CounterViewModel extends ViewModel<CounterState> {
   }
 
   increment() {
-    this.update(({ count }) => ({ count: count + 1 }));
+    super.update({ count: super.state.count + 1 });
   }
 }
 
@@ -37,13 +37,13 @@ counter.increment(); // Logs: Count: 1
 
 ## Extends
 
-- [`ViewModelWithDerivedState`](ViewModelWithDerivedState.md)\<`S`, `S`\>
+- [`ViewModelWithComputedState`](ViewModelWithComputedState.md)\<`S`, `S`\>
 
 ## Type Parameters
 
 ### S
 
-`S`
+`S` _extends_ `object`
 
 The state type
 
@@ -53,7 +53,7 @@ The state type
 
 > **new ViewModel**\<`S`\>(`initialState`): `ViewModel`\<`S`\>
 
-Defined in: [ViewModel.ts:38](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModel.ts#L38)
+Defined in: [ViewModel.ts:40](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModel.ts#L40)
 
 Create a new ViewModel with the given initial state.
 
@@ -71,7 +71,7 @@ The initial state of the view model
 
 #### Overrides
 
-[`ViewModelWithDerivedState`](ViewModelWithDerivedState.md).[`constructor`](ViewModelWithDerivedState.md#constructor)
+[`ViewModelWithComputedState`](ViewModelWithComputedState.md).[`constructor`](ViewModelWithComputedState.md#constructor)
 
 ## Accessors
 
@@ -81,11 +81,11 @@ The initial state of the view model
 
 > **get** **state**(): `D`
 
-Defined in: [ViewModelWithDerivedState.ts:171](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModelWithDerivedState.ts#L171)
+Defined in: [ViewModelWithComputedState.ts:159](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModelWithComputedState.ts#L159)
 
 Get the current derived state.
 
-This returns the derived state computed by `computeDerivedState`,
+This returns the derived state computed by `computedState`,
 not the internal state.
 
 ##### Returns
@@ -96,15 +96,15 @@ The current derived state
 
 #### Inherited from
 
-[`ViewModelWithDerivedState`](ViewModelWithDerivedState.md).[`state`](ViewModelWithDerivedState.md#state)
+[`ViewModelWithComputedState`](ViewModelWithComputedState.md).[`state`](ViewModelWithComputedState.md#state)
 
 ## Methods
 
-### computeDerivedState()
+### computedState()
 
-> **computeDerivedState**(`state`): `S`
+> **computedState**(`state`): `S`
 
-Defined in: [ViewModel.ts:42](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModel.ts#L42)
+Defined in: [ViewModel.ts:44](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModel.ts#L44)
 
 Compute the derived state from the internal state.
 
@@ -130,7 +130,7 @@ The derived state with any computed properties
 #### Example
 
 ```typescript
-computeDerivedState({ count }: CounterState): CounterDerivedState {
+computedState({ count }: CounterState): CounterDerivedState {
   return {
     count,
     isEven: count % 2 === 0,
@@ -141,7 +141,7 @@ computeDerivedState({ count }: CounterState): CounterDerivedState {
 
 #### Overrides
 
-[`ViewModelWithDerivedState`](ViewModelWithDerivedState.md).[`computeDerivedState`](ViewModelWithDerivedState.md#computederivedstate)
+[`ViewModelWithComputedState`](ViewModelWithComputedState.md).[`computedState`](ViewModelWithComputedState.md#computedstate)
 
 ---
 
@@ -149,7 +149,7 @@ computeDerivedState({ count }: CounterState): CounterDerivedState {
 
 > **subscribe**(`listener`): () => `void`
 
-Defined in: [ViewModelWithDerivedState.ts:92](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModelWithDerivedState.ts#L92)
+Defined in: [ViewModelWithComputedState.ts:82](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModelWithComputedState.ts#L82)
 
 Subscribe to state changes.
 
@@ -186,30 +186,29 @@ unsubscribe();
 
 #### Inherited from
 
-[`ViewModelWithDerivedState`](ViewModelWithDerivedState.md).[`subscribe`](ViewModelWithDerivedState.md#subscribe)
+[`ViewModelWithComputedState`](ViewModelWithComputedState.md).[`subscribe`](ViewModelWithComputedState.md#subscribe)
 
 ---
 
 ### update()
 
-> `protected` **update**(`updater`): `void`
+> `protected` **update**(`partial`): `void`
 
-Defined in: [ViewModelWithDerivedState.ts:130](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModelWithDerivedState.ts#L130)
+Defined in: [ViewModelWithComputedState.ts:118](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModelWithComputedState.ts#L118)
 
 Update the internal state, recompute derived state, and notify all subscribers.
 
 This method is protected and should only be called from within your view model subclass.
-The updater function receives the current internal state and should return the new internal state.
+The partial state is merged with the current internal state to create the new internal state.
 After updating, the derived state is automatically recomputed via `computeDerivedState`.
-Always return a new state object to ensure immutability.
 
 #### Parameters
 
-##### updater
+##### partial
 
-[`Updater`](../type-aliases/Updater.md)\<`S`\>
+`Partial`\<`S`\>
 
-Function that receives current internal state and returns new internal state
+Partial state to merge with the current internal state
 
 #### Returns
 
@@ -218,12 +217,11 @@ Function that receives current internal state and returns new internal state
 #### Example
 
 ```typescript
-this.update((currentState) => ({
-  ...currentState,
-  count: currentState.count + 1,
-}));
+super.update({
+  count: super.state.count + 1,
+});
 ```
 
 #### Inherited from
 
-[`ViewModelWithDerivedState`](ViewModelWithDerivedState.md).[`update`](ViewModelWithDerivedState.md#update)
+[`ViewModelWithComputedState`](ViewModelWithComputedState.md).[`update`](ViewModelWithComputedState.md#update)

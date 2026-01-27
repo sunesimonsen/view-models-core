@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { ViewModelWithDerivedState } from "../src";
+import { ViewModelWithComputedState } from "../src";
 
 type Operator = "+" | "-" | "/" | "*";
 type Operation = {
@@ -19,7 +19,7 @@ type CalculatorDerivedState = {
   lastOperation: Operation | null;
 };
 
-class CalculatorWithDerivedState extends ViewModelWithDerivedState<
+class CalculatorWithDerivedState extends ViewModelWithComputedState<
   CalculatorInternalState,
   CalculatorDerivedState
 > {
@@ -30,7 +30,7 @@ class CalculatorWithDerivedState extends ViewModelWithDerivedState<
     });
   }
 
-  computeDerivedState({
+  computedState({
     history,
     result,
   }: CalculatorInternalState): CalculatorDerivedState {
@@ -43,31 +43,31 @@ class CalculatorWithDerivedState extends ViewModelWithDerivedState<
   }
 
   add(n: number) {
-    super.update(({ history, result }) => ({
-      history: [...history, { number: n, operator: "+" }],
-      result: result + n,
-    }));
+    super.update({
+      history: [...super.state.history, { number: n, operator: "+" }],
+      result: super.state.result + n,
+    });
   }
 
   subtract(n: number) {
-    super.update(({ history, result }) => ({
-      history: [...history, { number: n, operator: "-" }],
-      result: result - n,
-    }));
+    super.update({
+      history: [...super.state.history, { number: n, operator: "-" }],
+      result: super.state.result - n,
+    });
   }
 
   divide(n: number) {
-    super.update(({ history, result }) => ({
-      history: [...history, { number: n, operator: "/" }],
-      result: result / n,
-    }));
+    super.update({
+      history: [...super.state.history, { number: n, operator: "/" }],
+      result: super.state.result / n,
+    });
   }
 
   multiply(n: number) {
-    super.update(({ history, result }) => ({
-      history: [...history, { number: n, operator: "*" }],
-      result: result * n,
-    }));
+    super.update({
+      history: [...super.state.history, { number: n, operator: "*" }],
+      result: super.state.result * n,
+    });
   }
 }
 
@@ -110,7 +110,7 @@ const expectedUpdates = [
   },
 ];
 
-describe("ViewModelWithDerivedState", () => {
+describe("ViewModelWithComputedState", () => {
   let calculator: CalculatorWithDerivedState;
   let updates: CalculatorDerivedState[];
   let unsubscribe: () => void;

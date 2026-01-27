@@ -1,14 +1,4 @@
 /**
- * Function that receives the current state and returns the new state.
- * The updater function should be pure and return a new state object.
- *
- * @template T - The state type
- * @param currentState - The current state
- * @returns The new state
- */
-export type Updater<T> = (currentState: T) => T;
-
-/**
  * Function that gets called when the state changes.
  *
  * @template T - The state type
@@ -38,12 +28,12 @@ export type ViewModelListener = () => void;
  *   remainingCount: number;
  * };
  *
- * class TodoViewModel extends ViewModelWithDerivedState<TodoState, TodoDerivedState> {
+ * class TodoViewModel extends ViewModelWithComputedState<TodoState, TodoDerivedState> {
  *   constructor() {
  *     super({ items: [] });
  *   }
  *
- *   computeDerivedState({ items }: TodoState): TodoDerivedState {
+ *   computedState({ items }: TodoState): TodoDerivedState {
  *     return {
  *       items,
  *       totalCount: items.length,
@@ -53,9 +43,9 @@ export type ViewModelListener = () => void;
  *   }
  *
  *   addTodo(text: string) {
- *     this.update(({ items }) => ({
- *       items: [...items, { id: crypto.randomUUID(), text, done: false }],
- *     }));
+ *     super.update({
+ *       items: [...super.state.items, { id: crypto.randomUUID(), text, done: false }],
+ *     });
  *   }
  * }
  *
@@ -66,7 +56,7 @@ export type ViewModelListener = () => void;
  * todos.addTodo('Learn ViewModels'); // Logs: Completed: 0
  * ```
  */
-export abstract class ViewModelWithDerivedState<S, D> {
+export abstract class ViewModelWithComputedState<S extends object, D> {
   private _listeners: Set<ViewModelListener> = new Set();
   private _internalState: S;
   private _state: D;
@@ -100,36 +90,34 @@ export abstract class ViewModelWithDerivedState<S, D> {
    * Create a new ViewModel with the given initial internal state.
    *
    * The constructor initializes the internal state and immediately computes
-   * the derived state by calling `computeDerivedState`.
+   * the derived state by calling `computedState`.
    *
    * @param initialState - The initial internal state of the view model
    */
   constructor(initialState: S) {
     this._internalState = initialState;
-    this._state = this.computeDerivedState(this._internalState);
+    this._state = this.computedState(this._internalState);
   }
 
   /**
    * Update the internal state, recompute derived state, and notify all subscribers.
    *
    * This method is protected and should only be called from within your view model subclass.
-   * The updater function receives the current internal state and should return the new internal state.
+   * The partial state is merged with the current internal state to create the new internal state.
    * After updating, the derived state is automatically recomputed via `computeDerivedState`.
-   * Always return a new state object to ensure immutability.
    *
-   * @param updater - Function that receives current internal state and returns new internal state
+   * @param partial - Partial state to merge with the current internal state
    *
    * @example
    * ```typescript
-   * this.update((currentState) => ({
-   *   ...currentState,
-   *   count: currentState.count + 1
-   * }));
+   * super.update({
+   *   count: super.state.count + 1
+   * });
    * ```
    */
-  protected update(updater: Updater<S>) {
-    this._internalState = updater(this._internalState);
-    this._state = this.computeDerivedState(this._internalState);
+  protected update(partial: Partial<S>) {
+    this._internalState = { ...this._internalState, ...partial };
+    this._state = this.computedState(this._internalState);
 
     for (const listener of this._listeners) {
       listener();
@@ -149,7 +137,7 @@ export abstract class ViewModelWithDerivedState<S, D> {
    *
    * @example
    * ```typescript
-   * computeDerivedState({ count }: CounterState): CounterDerivedState {
+   * computedState({ count }: CounterState): CounterDerivedState {
    *   return {
    *     count,
    *     isEven: count % 2 === 0,
@@ -158,12 +146,12 @@ export abstract class ViewModelWithDerivedState<S, D> {
    * }
    * ```
    */
-  abstract computeDerivedState(state: S): D;
+  abstract computedState(state: S): D;
 
   /**
    * Get the current derived state.
    *
-   * This returns the derived state computed by `computeDerivedState`,
+   * This returns the derived state computed by `computedState`,
    * not the internal state.
    *
    * @returns The current derived state

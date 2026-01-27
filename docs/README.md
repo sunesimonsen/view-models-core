@@ -7,9 +7,8 @@
 ## Classes
 
 - [ViewModel](classes/ViewModel.md)
-- [ViewModelWithDerivedState](classes/ViewModelWithDerivedState.md)
+- [ViewModelWithComputedState](classes/ViewModelWithComputedState.md)
 
 ## Type Aliases
 
-- [Updater](type-aliases/Updater.md)
 - [ViewModelListener](type-aliases/ViewModelListener.md)
