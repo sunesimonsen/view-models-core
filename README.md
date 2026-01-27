@@ -81,10 +81,10 @@ describe("CounterViewModel", () => {
 
 ## View Models with Derived State
 
-When you need to compute derived values from your state (like counts, filtered lists, or formatted data), use `ViewModelWithDerivedState`:
+When you need to compute derived values from your state (like counts, filtered lists, or formatted data), use `ViewModelWithComputedState`:
 
 ```typescript
-import { ViewModelWithDerivedState } from "@view-models/core";
+import { ViewModelWithComputedState } from "@view-models/core";
 
 type TodoState = {
   items: Array<{ id: string; text: string; done: boolean }>;
@@ -96,7 +96,7 @@ type TodoDerivedState = TodoState & {
   remainingCount: number;
 };
 
-class TodoViewModel extends ViewModelWithDerivedState<
+class TodoViewModel extends ViewModelWithComputedState<
   TodoState,
   TodoDerivedState
 > {
@@ -104,7 +104,7 @@ class TodoViewModel extends ViewModelWithDerivedState<
     super({ items: [] });
   }
 
-  computeDerivedState({ items }: TodoState): TodoDerivedState {
+  computedState({ items }: TodoState): TodoDerivedState {
     return {
       items,
       totalCount: items.length,

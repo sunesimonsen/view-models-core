@@ -28,12 +28,12 @@ export type ViewModelListener = () => void;
  *   remainingCount: number;
  * };
  *
- * class TodoViewModel extends ViewModelWithDerivedState<TodoState, TodoDerivedState> {
+ * class TodoViewModel extends ViewModelWithComputedState<TodoState, TodoDerivedState> {
  *   constructor() {
  *     super({ items: [] });
  *   }
  *
- *   computeDerivedState({ items }: TodoState): TodoDerivedState {
+ *   computedState({ items }: TodoState): TodoDerivedState {
  *     return {
  *       items,
  *       totalCount: items.length,
@@ -56,7 +56,7 @@ export type ViewModelListener = () => void;
  * todos.addTodo('Learn ViewModels'); // Logs: Completed: 0
  * ```
  */
-export abstract class ViewModelWithDerivedState<S extends object, D> {
+export abstract class ViewModelWithComputedState<S extends object, D> {
   private _listeners: Set<ViewModelListener> = new Set();
   private _internalState: S;
   private _state: D;
@@ -90,13 +90,13 @@ export abstract class ViewModelWithDerivedState<S extends object, D> {
    * Create a new ViewModel with the given initial internal state.
    *
    * The constructor initializes the internal state and immediately computes
-   * the derived state by calling `computeDerivedState`.
+   * the derived state by calling `computedState`.
    *
    * @param initialState - The initial internal state of the view model
    */
   constructor(initialState: S) {
     this._internalState = initialState;
-    this._state = this.computeDerivedState(this._internalState);
+    this._state = this.computedState(this._internalState);
   }
 
   /**
@@ -117,7 +117,7 @@ export abstract class ViewModelWithDerivedState<S extends object, D> {
    */
   protected update(partial: Partial<S>) {
     this._internalState = { ...this._internalState, ...partial };
-    this._state = this.computeDerivedState(this._internalState);
+    this._state = this.computedState(this._internalState);
 
     for (const listener of this._listeners) {
       listener();
@@ -137,7 +137,7 @@ export abstract class ViewModelWithDerivedState<S extends object, D> {
    *
    * @example
    * ```typescript
-   * computeDerivedState({ count }: CounterState): CounterDerivedState {
+   * computedState({ count }: CounterState): CounterDerivedState {
    *   return {
    *     count,
    *     isEven: count % 2 === 0,
@@ -146,12 +146,12 @@ export abstract class ViewModelWithDerivedState<S extends object, D> {
    * }
    * ```
    */
-  abstract computeDerivedState(state: S): D;
+  abstract computedState(state: S): D;
 
   /**
    * Get the current derived state.
    *
-   * This returns the derived state computed by `computeDerivedState`,
+   * This returns the derived state computed by `computedState`,
    * not the internal state.
    *
    * @returns The current derived state

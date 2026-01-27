@@ -8,7 +8,7 @@
 
 > **ViewModelListener** = () => `void`
 
-Defined in: [ViewModelWithDerivedState.ts:6](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModelWithDerivedState.ts#L6)
+Defined in: [ViewModelWithComputedState.ts:6](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModelWithComputedState.ts#L6)
 
 Function that gets called when the state changes.
 

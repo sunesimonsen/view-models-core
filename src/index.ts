@@ -1,2 +1,2 @@
 export * from "./ViewModel.js";
-export * from "./ViewModelWithDerivedState.js";
+export * from "./ViewModelWithComputedState.js";

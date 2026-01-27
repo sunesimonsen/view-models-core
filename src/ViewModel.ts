@@ -1,4 +1,4 @@
-import { ViewModelWithDerivedState } from "./ViewModelWithDerivedState.js";
+import { ViewModelWithComputedState } from "./ViewModelWithComputedState.js";
 
 /**
  * Abstract base class for creating reactive view models.
@@ -31,7 +31,7 @@ import { ViewModelWithDerivedState } from "./ViewModelWithDerivedState.js";
  */
 export abstract class ViewModel<
   S extends object,
-> extends ViewModelWithDerivedState<S, S> {
+> extends ViewModelWithComputedState<S, S> {
   /**
    * Create a new ViewModel with the given initial state.
    *
@@ -41,7 +41,7 @@ export abstract class ViewModel<
     super(initialState);
   }
 
-  computeDerivedState(state: S): S {
+  computedState(state: S): S {
     return state;
   }
 }

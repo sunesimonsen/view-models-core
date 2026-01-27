@@ -2,11 +2,11 @@
 
 ---
 
-[@view-models/core](../README.md) / ViewModelWithDerivedState
+[@view-models/core](../README.md) / ViewModelWithComputedState
 
-# Abstract Class: ViewModelWithDerivedState\<S, D\>
+# Abstract Class: ViewModelWithComputedState\<S, D\>
 
-Defined in: [ViewModelWithDerivedState.ts:59](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModelWithDerivedState.ts#L59)
+Defined in: [ViewModelWithComputedState.ts:59](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModelWithComputedState.ts#L59)
 
 Abstract base class for creating reactive view models with derived state.
 
@@ -28,7 +28,7 @@ type TodoDerivedState = TodoState & {
   remainingCount: number;
 };
 
-class TodoViewModel extends ViewModelWithDerivedState<
+class TodoViewModel extends ViewModelWithComputedState<
   TodoState,
   TodoDerivedState
 > {
@@ -36,7 +36,7 @@ class TodoViewModel extends ViewModelWithDerivedState<
     super({ items: [] });
   }
 
-  computeDerivedState({ items }: TodoState): TodoDerivedState {
+  computedState({ items }: TodoState): TodoDerivedState {
     return {
       items,
       totalCount: items.length,
@@ -84,14 +84,14 @@ The derived state type (exposed to subscribers)
 
 ### Constructor
 
-> **new ViewModelWithDerivedState**\<`S`, `D`\>(`initialState`): `ViewModelWithDerivedState`\<`S`, `D`\>
+> **new ViewModelWithComputedState**\<`S`, `D`\>(`initialState`): `ViewModelWithComputedState`\<`S`, `D`\>
 
-Defined in: [ViewModelWithDerivedState.ts:97](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModelWithDerivedState.ts#L97)
+Defined in: [ViewModelWithComputedState.ts:97](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModelWithComputedState.ts#L97)
 
 Create a new ViewModel with the given initial internal state.
 
 The constructor initializes the internal state and immediately computes
-the derived state by calling `computeDerivedState`.
+the derived state by calling `computedState`.
 
 #### Parameters
 
@@ -103,7 +103,7 @@ The initial internal state of the view model
 
 #### Returns
 
-`ViewModelWithDerivedState`\<`S`, `D`\>
+`ViewModelWithComputedState`\<`S`, `D`\>
 
 ## Accessors
 
@@ -113,11 +113,11 @@ The initial internal state of the view model
 
 > **get** **state**(): `D`
 
-Defined in: [ViewModelWithDerivedState.ts:159](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModelWithDerivedState.ts#L159)
+Defined in: [ViewModelWithComputedState.ts:159](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModelWithComputedState.ts#L159)
 
 Get the current derived state.
 
-This returns the derived state computed by `computeDerivedState`,
+This returns the derived state computed by `computedState`,
 not the internal state.
 
 ##### Returns
@@ -128,11 +128,11 @@ The current derived state
 
 ## Methods
 
-### computeDerivedState()
+### computedState()
 
-> `abstract` **computeDerivedState**(`state`): `D`
+> `abstract` **computedState**(`state`): `D`
 
-Defined in: [ViewModelWithDerivedState.ts:149](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModelWithDerivedState.ts#L149)
+Defined in: [ViewModelWithComputedState.ts:149](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModelWithComputedState.ts#L149)
 
 Compute the derived state from the internal state.
 
@@ -158,7 +158,7 @@ The derived state with any computed properties
 #### Example
 
 ```typescript
-computeDerivedState({ count }: CounterState): CounterDerivedState {
+computedState({ count }: CounterState): CounterDerivedState {
   return {
     count,
     isEven: count % 2 === 0,
@@ -173,7 +173,7 @@ computeDerivedState({ count }: CounterState): CounterDerivedState {
 
 > **subscribe**(`listener`): () => `void`
 
-Defined in: [ViewModelWithDerivedState.ts:82](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModelWithDerivedState.ts#L82)
+Defined in: [ViewModelWithComputedState.ts:82](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModelWithComputedState.ts#L82)
 
 Subscribe to state changes.
 
@@ -214,7 +214,7 @@ unsubscribe();
 
 > `protected` **update**(`partial`): `void`
 
-Defined in: [ViewModelWithDerivedState.ts:118](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModelWithDerivedState.ts#L118)
+Defined in: [ViewModelWithComputedState.ts:118](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModelWithComputedState.ts#L118)
 
 Update the internal state, recompute derived state, and notify all subscribers.
 
