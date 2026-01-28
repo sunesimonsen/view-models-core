@@ -106,6 +106,60 @@ function Counter({ model }) {
 }
 ```
 
+## Derived State
+
+The `derived` utility creates memoized mapper functions for computing derived state from your view model. This is useful when you need to transform or aggregate state values without recomputing on every render.
+
+The `derived` function uses `Object.is` to compare inputs. When the input reference hasn't changed (which is guaranteed when using immutable updates), the cached output is returned without re-executing the mapper function.
+
+```typescript
+import { ViewModel, derived } from "@view-models/core";
+
+type CartState = {
+  items: Array<{ id: string; price: number; quantity: number }>;
+};
+
+class CartViewModel extends ViewModel<CartState> {
+  constructor() {
+    super({ items: [] });
+  }
+
+  addItem(item: { id: string; price: number; quantity: number }) {
+    super.update({
+      items: [...super.state.items, item],
+    });
+  }
+}
+
+// Create a derived mapper that computes cart statistics
+const selectCartStats = derived((state: CartState) => ({
+  total: state.items.reduce((sum, item) => sum + item.price * item.quantity, 0),
+  itemCount: state.items.reduce((sum, item) => sum + item.quantity, 0),
+}));
+
+// Use it to compute derived state
+const cart = new CartViewModel();
+cart.addItem({ id: "1", price: 10, quantity: 2 });
+cart.addItem({ id: "2", price: 15, quantity: 1 });
+const stats = selectCartStats(cart.state); // { total: 35, itemCount: 3 }
+```
+
+Derived mappers are particularly useful with framework hooks like `useDerivedState` (from [@view-models/react](https://github.com/sunesimonsen/view-models-react)):
+
+```typescript
+function CartSummary({ cart }) {
+  // Only recomputes when cart.state reference changes
+  const stats = useDerivedState(cart, selectCartStats);
+
+  return (
+    <div>
+      <p>Items: {stats.itemCount}</p>
+      <p>Total: ${stats.total}</p>
+    </div>
+  );
+}
+```
+
 ## API Reference
 
 For detailed API documentation, see [docs](./docs).
