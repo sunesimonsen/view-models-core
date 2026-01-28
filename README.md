@@ -82,68 +82,6 @@ describe("CounterViewModel", () => {
 });
 ```
 
-## View Models with Derived State
-
-When you need to compute derived values from your state (like counts, filtered lists, or formatted data), use `ViewModelWithComputedState`:
-
-```typescript
-import { ViewModelWithComputedState } from "@view-models/core";
-
-type TodoState = {
-  items: Array<{ id: string; text: string; done: boolean }>;
-};
-
-type TodoDerivedState = TodoState & {
-  totalCount: number;
-  completedCount: number;
-  remainingCount: number;
-};
-
-class TodoViewModel extends ViewModelWithComputedState<
-  TodoState,
-  TodoDerivedState
-> {
-  constructor() {
-    super({ items: [] });
-  }
-
-  computedState({ items }: TodoState): TodoDerivedState {
-    return {
-      items,
-      totalCount: items.length,
-      completedCount: items.filter((item) => item.done).length,
-      remainingCount: items.filter((item) => !item.done).length,
-    };
-  }
-
-  addTodo(text: string) {
-    super.update({
-      items: [
-        ...super.state.items,
-        { id: crypto.randomUUID(), text, done: false },
-      ],
-    });
-  }
-
-  toggleTodo(id: string) {
-    super.update({
-      items: super.state.items.map((item) =>
-        item.id === id ? { ...item, done: !item.done } : item,
-      ),
-    });
-  }
-}
-
-const todos = new TodoViewModel();
-console.log(todos.state.totalCount); // 0
-
-todos.addTodo("Learn ViewModels");
-console.log(todos.state.totalCount); // 1
-console.log(todos.state.remainingCount); // 1
-```
-
-The derived state is automatically recomputed whenever the internal state changes, ensuring your computed properties are always up-to-date.
-
 ## Framework Integration
 
 The view models are designed to work with framework-specific adapters. Upcoming adapters include:

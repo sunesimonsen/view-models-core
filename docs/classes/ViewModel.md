@@ -6,7 +6,7 @@
 
 # Abstract Class: ViewModel\<S\>
 
-Defined in: [ViewModel.ts:32](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModel.ts#L32)
+Defined in: [ViewModel.ts:35](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModel.ts#L35)
 
 Abstract base class for creating reactive view models.
 
@@ -29,15 +29,11 @@ class CounterViewModel extends ViewModel<CounterState> {
 }
 
 const counter = new CounterViewModel();
-const unsubscribe = counter.subscribe((state) => {
-  console.log("Count:", state.count);
+const unsubscribe = counter.subscribe(() => {
+  console.log("Count:", counter.state.count);
 });
 counter.increment(); // Logs: Count: 1
 ```
-
-## Extends
-
-- [`ViewModelWithComputedState`](ViewModelWithComputedState.md)\<`S`, `S`\>
 
 ## Type Parameters
 
@@ -53,7 +49,7 @@ The state type
 
 > **new ViewModel**\<`S`\>(`initialState`): `ViewModel`\<`S`\>
 
-Defined in: [ViewModel.ts:40](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModel.ts#L40)
+Defined in: [ViewModel.ts:69](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModel.ts#L69)
 
 Create a new ViewModel with the given initial state.
 
@@ -69,87 +65,31 @@ The initial state of the view model
 
 `ViewModel`\<`S`\>
 
-#### Overrides
-
-[`ViewModelWithComputedState`](ViewModelWithComputedState.md).[`constructor`](ViewModelWithComputedState.md#constructor)
-
 ## Accessors
 
 ### state
 
 #### Get Signature
 
-> **get** **state**(): `D`
+> **get** **state**(): `S`
 
-Defined in: [ViewModelWithComputedState.ts:159](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModelWithComputedState.ts#L159)
+Defined in: [ViewModel.ts:98](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModel.ts#L98)
 
-Get the current derived state.
-
-This returns the derived state computed by `computedState`,
-not the internal state.
+Get the current state.
 
 ##### Returns
 
-`D`
+`S`
 
-The current derived state
-
-#### Inherited from
-
-[`ViewModelWithComputedState`](ViewModelWithComputedState.md).[`state`](ViewModelWithComputedState.md#state)
+The current state
 
 ## Methods
-
-### computedState()
-
-> **computedState**(`state`): `S`
-
-Defined in: [ViewModel.ts:44](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModel.ts#L44)
-
-Compute the derived state from the internal state.
-
-This abstract method must be implemented by subclasses to transform
-the internal state into the derived state that will be exposed to
-subscribers. This method is called automatically after each state
-update and during initialization.
-
-#### Parameters
-
-##### state
-
-`S`
-
-The current internal state
-
-#### Returns
-
-`S`
-
-The derived state with any computed properties
-
-#### Example
-
-```typescript
-computedState({ count }: CounterState): CounterDerivedState {
-  return {
-    count,
-    isEven: count % 2 === 0,
-    isPositive: count > 0,
-  };
-}
-```
-
-#### Overrides
-
-[`ViewModelWithComputedState`](ViewModelWithComputedState.md).[`computedState`](ViewModelWithComputedState.md#computedstate)
-
----
 
 ### subscribe()
 
 > **subscribe**(`listener`): () => `void`
 
-Defined in: [ViewModelWithComputedState.ts:82](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModelWithComputedState.ts#L82)
+Defined in: [ViewModel.ts:57](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModel.ts#L57)
 
 Subscribe to state changes.
 
@@ -176,17 +116,13 @@ Function to unsubscribe the listener
 #### Example
 
 ```typescript
-const unsubscribe = viewModel.subscribe((state) => {
-  console.log("State changed:", state);
+const unsubscribe = viewModel.subscribe(() => {
+  console.log("State changed:", viewModel.state);
 });
 
 // Later, when you want to stop listening:
 unsubscribe();
 ```
-
-#### Inherited from
-
-[`ViewModelWithComputedState`](ViewModelWithComputedState.md).[`subscribe`](ViewModelWithComputedState.md#subscribe)
 
 ---
 
@@ -194,13 +130,12 @@ unsubscribe();
 
 > `protected` **update**(`partial`): `void`
 
-Defined in: [ViewModelWithComputedState.ts:118](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModelWithComputedState.ts#L118)
+Defined in: [ViewModel.ts:88](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModel.ts#L88)
 
-Update the internal state, recompute derived state, and notify all subscribers.
+Update the state and notify all subscribers.
 
 This method is protected and should only be called from within your view model subclass.
-The partial state is merged with the current internal state to create the new internal state.
-After updating, the derived state is automatically recomputed via `computeDerivedState`.
+The partial state is merged with the current state to create the new state.
 
 #### Parameters
 
@@ -208,7 +143,7 @@ After updating, the derived state is automatically recomputed via `computeDerive
 
 `Partial`\<`S`\>
 
-Partial state to merge with the current internal state
+Partial state to merge with the current state
 
 #### Returns
 
@@ -221,7 +156,3 @@ super.update({
   count: super.state.count + 1,
 });
 ```
-
-#### Inherited from
-
-[`ViewModelWithComputedState`](ViewModelWithComputedState.md).[`update`](ViewModelWithComputedState.md#update)
