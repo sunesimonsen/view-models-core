@@ -7,7 +7,6 @@
 ## Classes
 
 - [ViewModel](classes/ViewModel.md)
-- [ViewModelWithComputedState](classes/ViewModelWithComputedState.md)
 
 ## Type Aliases
 
