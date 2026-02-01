@@ -1,135 +1,158 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { ViewModel } from "../src";
 
-type Operator = "+" | "-" | "/" | "*";
-type Operation = {
-  number: number;
-  operator: Operator;
+type Todo = {
+  id: number;
+  text: string;
+  completed: boolean;
 };
 
-type CalculatorState = {
-  history: ReadonlyArray<Operation>;
-  result: number;
+type TodoState = {
+  todos: ReadonlyArray<Todo>;
+  completedCount: number;
+  pendingCount: number;
 };
 
-class Calculator extends ViewModel<CalculatorState> {
-  constructor() {
-    super({
-      history: [],
-      result: 0,
+class TodoViewModel extends ViewModel<TodoState> {
+  private nextId = 1;
+
+  protected prepareState(state: TodoState): TodoState {
+    return {
+      ...state,
+      completedCount: state.todos.filter((t) => t.completed).length,
+      pendingCount: state.todos.filter((t) => !t.completed).length,
+    };
+  }
+
+  add(text: string) {
+    super.update({
+      todos: [
+        ...super.state.todos,
+        { id: this.nextId++, text, completed: false },
+      ],
     });
   }
 
-  add(n: number) {
+  toggle(id: number) {
     super.update({
-      history: [...super.state.history, { number: n, operator: "+" }],
-      result: super.state.result + n,
+      todos: super.state.todos.map((todo) =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo,
+      ),
     });
   }
 
-  subtract(n: number) {
+  remove(id: number) {
     super.update({
-      history: [...super.state.history, { number: n, operator: "-" }],
-      result: super.state.result - n,
-    });
-  }
-
-  divide(n: number) {
-    super.update({
-      history: [...super.state.history, { number: n, operator: "/" }],
-      result: super.state.result / n,
-    });
-  }
-
-  multiply(n: number) {
-    super.update({
-      history: [...super.state.history, { number: n, operator: "*" }],
-      result: super.state.result * n,
+      todos: super.state.todos.filter((todo) => todo.id !== id),
     });
   }
 }
 
-const expectedUpdates = [
-  {
-    history: [{ number: 10, operator: "+" }],
-    result: 10,
-  },
-  {
-    history: [
-      { number: 10, operator: "+" },
-      { number: 5, operator: "+" },
-    ],
-    result: 15,
-  },
-  {
-    history: [
-      { number: 10, operator: "+" },
-      { number: 5, operator: "+" },
-      { number: 2, operator: "*" },
-    ],
-    result: 30,
-  },
-  {
-    history: [
-      { number: 10, operator: "+" },
-      { number: 5, operator: "+" },
-      { number: 2, operator: "*" },
-      { number: 3, operator: "/" },
-    ],
-    result: 10,
-  },
-];
+const defaultState: TodoState = {
+  todos: [],
+  completedCount: 0,
+  pendingCount: 0,
+};
 
 describe("ViewModel", () => {
-  let calculator: Calculator;
-  let updates: CalculatorState[];
+  let todoModel: TodoViewModel;
+  let updates: TodoState[];
   let unsubscribe: () => void;
 
   beforeEach(() => {
     updates = [];
-    calculator = new Calculator();
-    unsubscribe = calculator.subscribe(() => {
-      updates.push(calculator.state);
+    todoModel = new TodoViewModel(defaultState);
+    unsubscribe = todoModel.subscribe(() => {
+      updates.push(todoModel.state);
     });
 
-    calculator.add(10);
-    calculator.add(5);
-    calculator.multiply(2);
-    calculator.divide(3);
+    todoModel.add("Buy milk");
+    todoModel.add("Walk the dog");
   });
 
-  it("updates its state accordingly to the operations", () => {
-    expect(calculator.state).toEqual({
-      history: [
-        { number: 10, operator: "+" },
-        { number: 5, operator: "+" },
-        { number: 2, operator: "*" },
-        { number: 3, operator: "/" },
+  it("updates state when adding todos", () => {
+    expect(todoModel.state).toEqual({
+      todos: [
+        { completed: false, id: 1, text: "Buy milk" },
+        { completed: false, id: 2, text: "Walk the dog" },
       ],
-      result: 10,
+      completedCount: 0,
+      pendingCount: 2,
     });
   });
 
-  describe("after unsubscribing", () => {
-    beforeEach(() => {
-      unsubscribe();
+  it("updates state when toggling todos", () => {
+    todoModel.toggle(1);
+
+    expect(todoModel.state).toEqual({
+      todos: [
+        { completed: true, id: 1, text: "Buy milk" },
+        { completed: false, id: 2, text: "Walk the dog" },
+      ],
+      completedCount: 1,
+      pendingCount: 1,
+    });
+  });
+
+  it("computes derived state on updates", () => {
+    todoModel.toggle(1);
+
+    expect(todoModel.state.completedCount).toBe(1);
+    expect(todoModel.state.pendingCount).toBe(1);
+  });
+
+  it("updates state when removing todos", () => {
+    todoModel.remove(1);
+
+    expect(todoModel.state.todos).toEqual([
+      { id: 2, text: "Walk the dog", completed: false },
+    ]);
+  });
+
+  it("notifies subscribers on each update", () => {
+    expect(updates).toEqual([
+      {
+        todos: [{ completed: false, id: 1, text: "Buy milk" }],
+        completedCount: 0,
+        pendingCount: 1,
+      },
+      {
+        todos: [
+          { completed: false, id: 1, text: "Buy milk" },
+          { completed: false, id: 2, text: "Walk the dog" },
+        ],
+        completedCount: 0,
+        pendingCount: 2,
+      },
+    ]);
+  });
+
+  it("emits no more updates after unsubscribing", () => {
+    unsubscribe();
+
+    todoModel.add("Clean the house");
+
+    expect(todoModel.state.todos).toHaveLength(3);
+    expect(updates).toHaveLength(2);
+  });
+
+  it("calls prepareState when the model is constructed", () => {
+    const todoModel = new TodoViewModel({
+      todos: [
+        { id: 1, text: "Done task", completed: true },
+        { id: 2, text: "Pending task", completed: false },
+      ],
+      completedCount: 0,
+      pendingCount: 0,
     });
 
-    it("emits no more updates", () => {
-      calculator.add(5);
-
-      expect(calculator.state).toEqual({
-        history: [
-          { number: 10, operator: "+" },
-          { number: 5, operator: "+" },
-          { number: 2, operator: "*" },
-          { number: 3, operator: "/" },
-          { number: 5, operator: "+" },
-        ],
-        result: 15,
-      });
-
-      expect(updates).toEqual(expectedUpdates);
+    expect(todoModel.state).toEqual({
+      todos: [
+        { completed: true, id: 1, text: "Done task" },
+        { completed: false, id: 2, text: "Pending task" },
+      ],
+      completedCount: 1,
+      pendingCount: 1,
     });
   });
 });
