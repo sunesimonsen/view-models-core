@@ -3,7 +3,9 @@
 [![CI](https://github.com/sunesimonsen/view-models-core/actions/workflows/ci.yml/badge.svg)](https://github.com/sunesimonsen/view-models-core/actions/workflows/ci.yml)
 [![Bundle Size](https://img.badgesize.io/https://unpkg.com/@view-models/core@latest/dist/index.js?label=gzip&compression=gzip)](https://unpkg.com/@view-models/core@latest/dist/index.js)
 
-A lightweight, framework-agnostic library for building reactive view models with TypeScript. Separate your business logic from your UI framework with a simple, testable pattern.
+A lightweight, framework-agnostic library for building reactive view models with
+TypeScript. Separate your business logic from your UI framework with a simple,
+testable pattern.
 
 ![View models banner](./view-models.png)
 
@@ -38,17 +40,17 @@ class CounterViewModel extends ViewModel<CounterState> {
     super({ count: 0 });
   }
 
-  increment() {
+  increment = () => {
     super.update({
       count: super.state.count + 1,
     });
-  }
+  };
 
-  decrement() {
+  decrement = () => {
     super.update({
       count: super.state.count - 1,
     });
-  }
+  };
 }
 ```
 
@@ -84,7 +86,8 @@ describe("CounterViewModel", () => {
 
 ## Framework Integration
 
-The view models are designed to work with framework-specific adapters. Upcoming adapters include:
+The view models are designed to work with framework-specific adapters. Upcoming
+adapters include:
 
 - [@view-models/react](https://github.com/sunesimonsen/view-models-react) - React hooks integration
 - [@view-models/preact](https://github.com/sunesimonsen/view-models-preact) - Preact hooks integration
@@ -101,60 +104,6 @@ function Counter({ model }) {
       <p>Count: {count}</p>
       <button onClick={model.increment}>+</button>
       <button onClick={model.decrement}>-</button>
-    </div>
-  );
-}
-```
-
-## Derived State
-
-The `derived` utility creates memoized mapper functions for computing derived state from your view model. This is useful when you need to transform or aggregate state values without recomputing on every render.
-
-The `derived` function uses `Object.is` to compare inputs. When the input reference hasn't changed (which is guaranteed when using immutable updates), the cached output is returned without re-executing the mapper function.
-
-```typescript
-import { ViewModel, derived } from "@view-models/core";
-
-type CartState = {
-  items: Array<{ id: string; price: number; quantity: number }>;
-};
-
-class CartViewModel extends ViewModel<CartState> {
-  constructor() {
-    super({ items: [] });
-  }
-
-  addItem(item: { id: string; price: number; quantity: number }) {
-    super.update({
-      items: [...super.state.items, item],
-    });
-  }
-}
-
-// Create a derived mapper that computes cart statistics
-const selectCartStats = derived((state: CartState) => ({
-  total: state.items.reduce((sum, item) => sum + item.price * item.quantity, 0),
-  itemCount: state.items.reduce((sum, item) => sum + item.quantity, 0),
-}));
-
-// Use it to compute derived state
-const cart = new CartViewModel();
-cart.addItem({ id: "1", price: 10, quantity: 2 });
-cart.addItem({ id: "2", price: 15, quantity: 1 });
-const stats = selectCartStats(cart.state); // { total: 35, itemCount: 3 }
-```
-
-Derived mappers are particularly useful with framework hooks like `useDerivedState` (from [@view-models/react](https://github.com/sunesimonsen/view-models-react)):
-
-```typescript
-function CartSummary({ cart }) {
-  // Only recomputes when cart.state reference changes
-  const stats = useDerivedState(cart, selectCartStats);
-
-  return (
-    <div>
-      <p>Items: {stats.itemCount}</p>
-      <p>Total: ${stats.total}</p>
     </div>
   );
 }
@@ -241,6 +190,52 @@ class TodosViewModel extends ViewModel<TodosState> {
   }
 }
 ```
+
+### Derived State with prepareState
+
+Override the `prepareState` method to compute derived values or enforce
+invariants before state is committed. This hook intercepts every state update,
+allowing you to transform the state before subscribers are notified:
+
+```typescript
+type FormState = {
+  firstName: string;
+  lastName: string;
+  fullName: string;
+};
+
+class FormViewModel extends ViewModel<FormState> {
+  constructor() {
+    super({ firstName: "", lastName: "", fullName: "" });
+  }
+
+  protected prepareState(updatedState: FormState): FormState {
+    return {
+      ...updatedState,
+      fullName: `${updatedState.firstName} ${updatedState.lastName}`.trim(),
+    };
+  }
+
+  setFirstName(firstName: string) {
+    super.update({ firstName });
+  }
+
+  setLastName(lastName: string) {
+    super.update({ lastName });
+  }
+}
+
+const form = new FormViewModel();
+form.setFirstName("John");
+form.setLastName("Doe");
+console.log(form.state.fullName); // "John Doe"
+```
+
+This pattern is useful for:
+
+- Computing derived values that depend on multiple state fields
+- Enforcing invariants (e.g., ensuring values stay within bounds)
+- Normalizing state (e.g., trimming strings, sorting arrays)
 
 ## License
 
