@@ -67,7 +67,7 @@ export abstract class ViewModel<S extends object> {
    * @param initialState - The initial state of the view model
    */
   constructor(initialState: S) {
-    this._state = initialState;
+    this._state = this.prepareState(initialState);
   }
 
   /**
@@ -76,7 +76,7 @@ export abstract class ViewModel<S extends object> {
    * This method is protected and should only be called from within your view model subclass.
    * The partial state is merged with the current state to create the new state.
    *
-   * @param partial - Partial state to merge with the current state
+   * @param update - Partial state to merge with the current state
    *
    * @example
    * ```typescript
@@ -85,9 +85,39 @@ export abstract class ViewModel<S extends object> {
    * });
    * ```
    */
-  protected update(partial: Partial<S>) {
-    this._state = { ...this._state, ...partial };
+  protected update(update: Partial<S>) {
+    this._state = this.prepareState({ ...this._state, ...update });
     this._listeners.forEach((l) => l());
+  }
+
+  /**
+   * Hook to transform state before it is committed and subscribers are notified.
+   *
+   * Override this method in your subclass to intercept and modify state updates.
+   * This is useful for computing derived values, enforcing invariants, or
+   * normalizing state before it becomes the new state.
+   *
+   * By default, this method returns the input unchanged.
+   *
+   * @param updatedState - The new state that will be committed
+   * @returns The state to commit (can be modified or the same object)
+   *
+   * @example
+   * ```typescript
+   * type FormState = { firstName: string; lastName: string; fullName: string };
+   *
+   * class FormViewModel extends ViewModel<FormState> {
+   *   protected prepareState(updatedState: FormState): FormState {
+   *     return {
+   *       ...updatedState,
+   *       fullName: `${updatedState.firstName} ${updatedState.lastName}`,
+   *     };
+   *   }
+   * }
+   * ```
+   */
+  protected prepareState(updatedState: S): S {
+    return updatedState;
   }
 
   /**
