@@ -67,7 +67,7 @@ export abstract class ViewModel<S extends object> {
    * @param initialState - The initial state of the view model
    */
   constructor(initialState: S) {
-    this._state = this.prepareState(initialState);
+    this._state = initialState;
   }
 
   /**
@@ -86,38 +86,8 @@ export abstract class ViewModel<S extends object> {
    * ```
    */
   protected update(update: Partial<S>) {
-    this._state = this.prepareState({ ...this._state, ...update });
+    this._state = { ...this._state, ...update };
     this._listeners.forEach((l) => l());
-  }
-
-  /**
-   * Hook to transform state before it is committed and subscribers are notified.
-   *
-   * Override this method in your subclass to intercept and modify state updates.
-   * This is useful for computing derived values, enforcing invariants, or
-   * normalizing state before it becomes the new state.
-   *
-   * By default, this method returns the input unchanged.
-   *
-   * @param updatedState - The new state that will be committed
-   * @returns The state to commit (can be modified or the same object)
-   *
-   * @example
-   * ```typescript
-   * type FormState = { firstName: string; lastName: string; fullName: string };
-   *
-   * class FormViewModel extends ViewModel<FormState> {
-   *   protected prepareState(updatedState: FormState): FormState {
-   *     return {
-   *       ...updatedState,
-   *       fullName: `${updatedState.firstName} ${updatedState.lastName}`,
-   *     };
-   *   }
-   * }
-   * ```
-   */
-  protected prepareState(updatedState: S): S {
-    return updatedState;
   }
 
   /**

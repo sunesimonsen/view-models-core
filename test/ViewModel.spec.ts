@@ -7,11 +7,19 @@ type Todo = {
   completed: boolean;
 };
 
+type TodoArray = ReadonlyArray<Todo>;
+
 type TodoState = {
-  todos: ReadonlyArray<Todo>;
+  todos: TodoArray;
   completedCount: number;
   pendingCount: number;
 };
+
+const getCompletedCount = (todos: TodoArray) =>
+  todos.reduce((count, todo) => count + (todo.completed ? 1 : 0), 0);
+
+const getPendingCount = (todos: TodoArray) =>
+  todos.length - getCompletedCount(todos);
 
 class TodoViewModel extends ViewModel<TodoState> {
   private nextId = 1;
@@ -25,25 +33,30 @@ class TodoViewModel extends ViewModel<TodoState> {
   }
 
   add(text: string) {
-    super.update({
-      todos: [
-        ...super.state.todos,
-        { id: this.nextId++, text, completed: false },
-      ],
-    });
+    const todos = [
+      ...super.state.todos,
+      { id: this.nextId++, text, completed: false },
+    ];
+    this.updateTodos(todos);
   }
 
   toggle(id: number) {
-    super.update({
-      todos: super.state.todos.map((todo) =>
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo,
-      ),
-    });
+    const todos = super.state.todos.map((todo) =>
+      todo.id === id ? { ...todo, completed: !todo.completed } : todo,
+    );
+    this.updateTodos(todos);
   }
 
   remove(id: number) {
+    const todos = super.state.todos.filter((todo) => todo.id !== id);
+    this.updateTodos(todos);
+  }
+
+  private updateTodos(todos: TodoArray) {
     super.update({
-      todos: super.state.todos.filter((todo) => todo.id !== id),
+      todos,
+      completedCount: getCompletedCount(todos),
+      pendingCount: getPendingCount(todos),
     });
   }
 }
@@ -94,13 +107,6 @@ describe("ViewModel", () => {
     });
   });
 
-  it("computes derived state on updates", () => {
-    todoModel.toggle(1);
-
-    expect(todoModel.state.completedCount).toBe(1);
-    expect(todoModel.state.pendingCount).toBe(1);
-  });
-
   it("updates state when removing todos", () => {
     todoModel.remove(1);
 
@@ -134,25 +140,5 @@ describe("ViewModel", () => {
 
     expect(todoModel.state.todos).toHaveLength(3);
     expect(updates).toHaveLength(2);
-  });
-
-  it("calls prepareState when the model is constructed", () => {
-    const todoModel = new TodoViewModel({
-      todos: [
-        { id: 1, text: "Done task", completed: true },
-        { id: 2, text: "Pending task", completed: false },
-      ],
-      completedCount: 0,
-      pendingCount: 0,
-    });
-
-    expect(todoModel.state).toEqual({
-      todos: [
-        { completed: true, id: 1, text: "Done task" },
-        { completed: false, id: 2, text: "Pending task" },
-      ],
-      completedCount: 1,
-      pendingCount: 1,
-    });
   });
 });

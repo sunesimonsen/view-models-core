@@ -73,7 +73,7 @@ The initial state of the view model
 
 > **get** **state**(): `S`
 
-Defined in: [ViewModel.ts:128](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModel.ts#L128)
+Defined in: [ViewModel.ts:98](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModel.ts#L98)
 
 Get the current state.
 
@@ -84,51 +84,6 @@ Get the current state.
 The current state
 
 ## Methods
-
-### prepareState()
-
-> `protected` **prepareState**(`updatedState`): `S`
-
-Defined in: [ViewModel.ts:119](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModel.ts#L119)
-
-Hook to transform state before it is committed and subscribers are notified.
-
-Override this method in your subclass to intercept and modify state updates.
-This is useful for computing derived values, enforcing invariants, or
-normalizing state before it becomes the new state.
-
-By default, this method returns the input unchanged.
-
-#### Parameters
-
-##### updatedState
-
-`S`
-
-The new state that will be committed
-
-#### Returns
-
-`S`
-
-The state to commit (can be modified or the same object)
-
-#### Example
-
-```typescript
-type FormState = { firstName: string; lastName: string; fullName: string };
-
-class FormViewModel extends ViewModel<FormState> {
-  protected prepareState(updatedState: FormState): FormState {
-    return {
-      ...updatedState,
-      fullName: `${updatedState.firstName} ${updatedState.lastName}`,
-    };
-  }
-}
-```
-
----
 
 ### subscribe()
 

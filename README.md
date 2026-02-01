@@ -191,51 +191,57 @@ class TodosViewModel extends ViewModel<TodosState> {
 }
 ```
 
-### Derived State with prepareState
+### Derived State
 
-Override the `prepareState` method to compute derived values or enforce
-invariants before state is committed. This hook intercepts every state update,
-allowing you to transform the state before subscribers are notified:
+When you have state values that are derived from other state, create a dedicated
+update method that computes these values. This approach is more explicit and
+efficient than intercepting every state update:
 
 ```typescript
-type FormState = {
-  firstName: string;
-  lastName: string;
-  fullName: string;
+type TodoState = {
+  todos: ReadonlyArray<{ id: number; text: string; completed: boolean }>;
+  completedCount: number;
+  pendingCount: number;
 };
 
-class FormViewModel extends ViewModel<FormState> {
+class TodoViewModel extends ViewModel<TodoState> {
+  private nextId = 1;
+
   constructor() {
-    super({ firstName: "", lastName: "", fullName: "" });
+    super({ todos: [], completedCount: 0, pendingCount: 0 });
   }
 
-  protected prepareState(updatedState: FormState): FormState {
-    return {
-      ...updatedState,
-      fullName: `${updatedState.firstName} ${updatedState.lastName}`.trim(),
-    };
+  add(text: string) {
+    const todos = [
+      ...super.state.todos,
+      { id: this.nextId++, text, completed: false },
+    ];
+    this.updateTodos(todos);
   }
 
-  setFirstName(firstName: string) {
-    super.update({ firstName });
+  toggle(id: number) {
+    const todos = super.state.todos.map((todo) =>
+      todo.id === id ? { ...todo, completed: !todo.completed } : todo,
+    );
+    this.updateTodos(todos);
   }
 
-  setLastName(lastName: string) {
-    super.update({ lastName });
+  private updateTodos(todos: TodoState["todos"]) {
+    super.update({
+      todos,
+      completedCount: todos.filter((t) => t.completed).length,
+      pendingCount: todos.filter((t) => !t.completed).length,
+    });
   }
 }
 
-const form = new FormViewModel();
-form.setFirstName("John");
-form.setLastName("Doe");
-console.log(form.state.fullName); // "John Doe"
+const todoModel = new TodoViewModel();
+todoModel.add("Buy milk");
+todoModel.add("Walk the dog");
+todoModel.toggle(1);
+console.log(todoModel.state.completedCount); // 1
+console.log(todoModel.state.pendingCount); // 1
 ```
-
-This pattern is useful for:
-
-- Computing derived values that depend on multiple state fields
-- Enforcing invariants (e.g., ensuring values stay within bounds)
-- Normalizing state (e.g., trimming strings, sorting arrays)
 
 ## License
 
