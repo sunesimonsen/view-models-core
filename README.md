@@ -84,6 +84,10 @@ describe("CounterViewModel", () => {
 });
 ```
 
+## Examples
+
+* [TodoMVC using @view-models/react](https://github.com/sunesimonsen/view-models-react-todomvc)
+
 ## Framework Integration
 
 The view models are designed to work with framework-specific adapters. Upcoming
