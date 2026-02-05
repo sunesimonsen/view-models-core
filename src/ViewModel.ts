@@ -56,9 +56,7 @@ export abstract class ViewModel<S extends object> {
    */
   subscribe(listener: ViewModelListener): () => void {
     this._listeners.add(listener);
-    return () => {
-      this._listeners.delete(listener);
-    };
+    return () => this._listeners.delete(listener);
   }
 
   /**
