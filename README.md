@@ -11,10 +11,10 @@ testable pattern.
 
 ## Why View Models?
 
-- **Framework Agnostic**: Write your logic once, use it with React, Preact, or any other framework
+- **Framework-agnostic**: Write your logic once, use it with React, Preact, or any other framework
 - **Easy Testing**: Test your view logic without rendering anything to the DOM
 - **Simple API**: Just extend `ViewModel` and you're ready to go
-- **Type Safe**: Built with TypeScript for excellent IDE support
+- **Type-safe**: Built with TypeScript for excellent IDE support
 - **Minimal Boilerplate**: Much lighter than Redux with no reducers, actions, or middleware needed
 - **Natural Organization**: A clear place to put your application logic
 
@@ -122,7 +122,7 @@ For detailed API documentation, see [docs](./docs).
 
 ### Keep State Immutable
 
-Always return new state objects from your updater functions:
+Always pass a new partial state object to `update`:
 
 ```typescript
 // Good
@@ -159,10 +159,9 @@ class AppViewModel {
 }
 ```
 
-### Asynchronous actions
+### Asynchronous Actions
 
-While the update logic is pure, you can use methods to execute asynchronous
-actions:
+Keep update logic pure; use methods to execute asynchronous actions:
 
 ```typescript
 class TodosViewModel extends ViewModel<TodosState> {
