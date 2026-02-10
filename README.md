@@ -4,8 +4,14 @@
 [![Bundle Size](https://img.badgesize.io/https://unpkg.com/@view-models/core@latest/dist/index.js?label=gzip&compression=gzip)](https://unpkg.com/@view-models/core@latest/dist/index.js)
 
 A lightweight, framework-agnostic library for building reactive view models with
-TypeScript. Separate your business logic from your UI framework with a simple,
+TypeScript. It separates business logic from UI frameworks with a simple,
 testable pattern.
+
+Hooks-based state management (for example in React) can easily lead to state
+scattered across components, harder-to-control test setups, and re-rendering
+pitfalls. By extracting the main logic of an application into a view model
+layer, you get easier testing, more predictable rendering, and avoid needing to
+follow the rules of hooks.
 
 ![View models banner](./view-models.png)
 
