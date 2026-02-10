@@ -13,7 +13,55 @@ pitfalls. By extracting the main logic of an application into a view model
 layer, you get easier testing, more predictable rendering, and avoid needing to
 follow the rules of hooks.
 
-![View models banner](./view-models.png)
+![view models](https://github.com/user-attachments/assets/e8e86f2c-99bd-47bb-846e-4893274689b1)<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0" y="0" width="830" height="240" viewBox="0, 0, 830, 240">
+  <g id="Deviders">
+    <path d="M277.167,13.748 L277.167,227.14" fill-opacity="0" stroke="#8C8C8C" stroke-width="1" stroke-dasharray="10,7"/>
+    <path d="M553.833,13.748 L553.833,227.14" fill-opacity="0" stroke="#8C8C8C" stroke-width="1" stroke-dasharray="10,7"/>
+  </g>
+  <g id="Tests">
+    <text transform="matrix(1, 0, 0, 1, 136.06, 128.752)">
+      <tspan x="-124.537" y="-57.22" font-family="Helvetica-Bold" font-size="12" fill="#717070">Views created by a specific framework like </tspan>
+      <tspan x="-124.537" y="-42.22" font-family="Helvetica-Bold" font-size="12" fill="#717070">React.</tspan>
+      <tspan x="-124.537" y="-12.22" font-family="Helvetica-Bold" font-size="12" fill="#717070">Views subscribe to state updates on the </tspan>
+      <tspan x="-124.537" y="2.78" font-family="Helvetica-Bold" font-size="12" fill="#717070">view models and re-render the view.</tspan>
+      <tspan x="-124.537" y="32.78" font-family="Helvetica-Bold" font-size="12" fill="#717070">Views listen to user events and invokes </tspan>
+      <tspan x="-124.537" y="47.78" font-family="Helvetica-Bold" font-size="12" fill="#717070">methods on the view model to update the </tspan>
+      <tspan x="-124.537" y="62.78" font-family="Helvetica-Bold" font-size="12" fill="#717070">state.</tspan>
+    </text>
+    <text transform="matrix(1, 0, 0, 1, 414.917, 135.957)">
+      <tspan x="-124.537" y="-64.425" font-family="Helvetica-Bold" font-size="12" fill="#544747">View models captures the state of the </tspan>
+      <tspan x="-124.537" y="-49.425" font-family="Helvetica-Bold" font-size="12" fill="#544747">system and exposes actions in the form of </tspan>
+      <tspan x="-124.537" y="-34.425" font-family="Helvetica-Bold" font-size="12" fill="#544747">methods that allows updating the state of </tspan>
+      <tspan x="-124.537" y="-19.425" font-family="Helvetica-Bold" font-size="12" fill="#544747">the application.</tspan>
+      <tspan x="-124.537" y="10.575" font-family="Helvetica-Bold" font-size="12" fill="#544747">View integrate with the state of the view </tspan>
+      <tspan x="-124.537" y="25.575" font-family="Helvetica-Bold" font-size="12" fill="#544747">models by subscribing to state updates.</tspan>
+      <tspan x="-124.537" y="55.575" font-family="Helvetica-Bold" font-size="12" fill="#544747">Actions of view models can call external </tspan>
+      <tspan x="-124.537" y="70.575" font-family="Helvetica-Bold" font-size="12" fill="#544747">dependencies like network and storage.</tspan>
+    </text>
+    <text transform="matrix(1, 0, 0, 1, 693.773, 120.466)">
+      <tspan x="-124.537" y="-48.935" font-family="Helvetica-Bold" font-size="12" fill="#717070">Dependencies is supplied to the view </tspan>
+      <tspan x="-124.537" y="-33.935" font-family="Helvetica-Bold" font-size="12" fill="#717070">models through their constructor and can </tspan>
+      <tspan x="-124.537" y="-18.935" font-family="Helvetica-Bold" font-size="12" fill="#717070">interactive with the world outside the </tspan>
+      <tspan x="-124.537" y="-3.935" font-family="Helvetica-Bold" font-size="12" fill="#717070">application. </tspan>
+      <tspan x="-124.537" y="26.065" font-family="Helvetica-Bold" font-size="12" fill="#717070">Examples of dependencies could be </tspan>
+      <tspan x="-124.537" y="41.065" font-family="Helvetica-Bold" font-size="12" fill="#717070">network requests, browser storage, web </tspan>
+      <tspan x="-124.537" y="56.065" font-family="Helvetica-Bold" font-size="12" fill="#717070">sockets, workers and so on.</tspan>
+    </text>
+  </g>
+  <g id="Headings">
+    <text transform="matrix(1, 0, 0, 1, 137.5, 30.5)">
+      <tspan x="-22.539" y="3.5" font-family="Helvetica-Bold" font-size="16" fill="#717070">Views</tspan>
+    </text>
+    <text transform="matrix(1, 0, 0, 1, 415, 30.5)">
+      <tspan x="-48.32" y="3.5" font-family="Helvetica-Bold" font-size="16" fill="#544647">View models</tspan>
+    </text>
+    <text transform="matrix(1, 0, 0, 1, 692.5, 30.5)">
+      <tspan x="-54.242" y="3.5" font-family="Helvetica-Bold" font-size="16" fill="#717070">Dependencies</tspan>
+    </text>
+  </g>
+</svg>
 
 ## Why View Models?
 
