@@ -49,7 +49,7 @@ The state type
 
 > **new ViewModel**\<`S`\>(`initialState`): `ViewModel`\<`S`\>
 
-Defined in: [ViewModel.ts:69](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModel.ts#L69)
+Defined in: [ViewModel.ts:67](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModel.ts#L67)
 
 Create a new ViewModel with the given initial state.
 
@@ -73,7 +73,7 @@ The initial state of the view model
 
 > **get** **state**(): `S`
 
-Defined in: [ViewModel.ts:98](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModel.ts#L98)
+Defined in: [ViewModel.ts:96](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModel.ts#L96)
 
 Get the current state.
 
@@ -130,7 +130,7 @@ unsubscribe();
 
 > `protected` **update**(`update`): `void`
 
-Defined in: [ViewModel.ts:88](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModel.ts#L88)
+Defined in: [ViewModel.ts:86](https://github.com/sunesimonsen/view-models-core/blob/main/src/ViewModel.ts#L86)
 
 Update the state and notify all subscribers.
 
