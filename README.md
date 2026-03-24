@@ -91,7 +91,9 @@ describe("CounterViewModel", () => {
 ## Examples
 
 - [TodoMVC using @view-models/react](https://github.com/sunesimonsen/view-models-react-todomvc)
+- [TodoMVC using @view-models/preact](https://github.com/sunesimonsen/view-models-preact-todomvc)
 - [HackerNews using @view-models/react](https://github.com/sunesimonsen/view-models-react-hackernews)
+- [HackerNews using @view-models/preact](https://github.com/sunesimonsen/view-models-preact-hackernews)
 
 ## Framework Integration
 
